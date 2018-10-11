@@ -21,7 +21,7 @@ class TestRecommendations(unittest.TestCase):
 
 	def test_delete_a_recommendation(self): 
 		recommendation = Recommendation(0, "name", "recommended", "category")
-		recommended.save()
+		recommendation.save()
 		self.assertEqual(len(Recommendation.all()), 1)
 		recommendation.delete()
-		self.assertEqual(len(Recommendation.all()), 1)
+		self.assertEqual(len(Recommendation.all()), 0)

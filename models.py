@@ -63,4 +63,4 @@ class Recommendation(object):
     @staticmethod
     def all():
         """ Query that returns all recommendations """
-        return Recommendation.recommendations; 
+        return Recommendation.recommendations

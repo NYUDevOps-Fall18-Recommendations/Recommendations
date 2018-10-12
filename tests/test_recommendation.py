@@ -18,3 +18,10 @@ class TestRecommendations(unittest.TestCase):
 	def setUp(self):
 		# Recommendation.init_db()
 		Recommendation.remove_all()
+
+	def test_delete_a_recommendation(self): 
+		recommendation = Recommendation(0, "name", "recommended", "category")
+		recommendation.save()
+		self.assertEqual(len(Recommendation.all()), 1)
+		recommendation.delete()
+		self.assertEqual(len(Recommendation.all()), 0)

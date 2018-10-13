@@ -18,3 +18,10 @@ class TestRecommendations(unittest.TestCase):
 	def setUp(self):
 		# Recommendation.init_db()
 		Recommendation.remove_all()
+
+
+######################################################################
+#   M A I N
+######################################################################
+if __name__ == '__main__':
+    unittest.main()

@@ -3,8 +3,7 @@
 **Steps to run and test the app:** 
 * run command "vagrant up"
 * run command "vagrant ssh"
-* run command "coverage run -m pytest"
-* run command "coverage report -m"
+* run command "nosetests"
 
 
 # Travis CI

@@ -64,3 +64,17 @@ class Recommendation(object):
     def all():
         """ Query that returns all recommendations """
         return Recommendation.recommendations
+
+
+######################################################################
+#  F I N D E R   M E T H O D S
+######################################################################
+
+    @staticmethod
+    def find(recommendation_id):
+        """ Query that finds Pets by their id """
+        for recommendation in Recommendation.recommendations: 
+            if recommendation.id == recommendation_id: 
+                return recommendation
+
+        return None

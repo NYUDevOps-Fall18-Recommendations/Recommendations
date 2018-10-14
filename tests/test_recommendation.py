@@ -38,6 +38,7 @@ class TestRecommendations(unittest.TestCase):
 		self.assertIsNone(Recommendation.find(0))
 		recommendation = Recommendation(0, "name", "recommended", "category")
 		recommendation.save()
+		
 		find_result = Recommendation.find(0)
 		self.assertNotEqual(find_result, None)
 		self.assertEqual(find_result.suggestion, recommendation.suggestion)

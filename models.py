@@ -49,12 +49,6 @@ class Recommendation(object):
         else: 
             del self.recommendations[target_index]
 
-    def find(targetId): 
-        for recommendation in Recommendation.recommendations: 
-            if (recommendation.id == targetId): 
-                return recommendation
-        return None
-
     def update(self): 
         for recommendation in Recommendation.recommendations: 
             if recommendation.id == self.id: 
@@ -79,6 +73,15 @@ class Recommendation(object):
     def all():
         """ Query that returns all recommendations """
         return Recommendation.recommendations
+
+
+    @staticmethod
+    def find(targetId): 
+        for recommendation in Recommendation.recommendations: 
+            if (recommendation.id == targetId): 
+                return recommendation
+        return None
+
 
     @staticmethod
     def __find_by(attribute, value):

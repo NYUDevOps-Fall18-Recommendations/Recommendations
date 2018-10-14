@@ -1,3 +1,7 @@
+"""
+Recommendation Service:
+POST /recommendation - creates a new recommendation record in the database
+"""
 import os
 import sys
 import logging
@@ -22,6 +26,26 @@ def index():
     """ Send back the home page """
     return 'Hello World'
 
+
+######################################################################
+# ADD A NEW RECOMMENDATION
+######################################################################
+@app.route('/recommendation', methods=['POST'])
+def create_recommendation():
+    """
+    Creates a Pet
+    This endpoint will create a Pet based the data in the body that is posted
+    """
+    check_content_type('application/json')
+    recommendation = recommendation()
+    pet.deserialize(request.get_json())
+    pet.save()
+    message = pet.serialize()
+    location_url = url_for('get_pets', pet_id=pet.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED,
+                         {
+                             'Location': location_url
+                         })
 ######################################################################
 #   M A I N
 ######################################################################

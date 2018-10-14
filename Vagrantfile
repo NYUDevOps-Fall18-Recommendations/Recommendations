@@ -76,6 +76,7 @@ Vagrant.configure("2") do |config|
 
     cd /vagrant
     sudo -u ubuntu echo "colorscheme desert" > ~/.vimrc
+    pip install -r requirements.txt
   #   apt-get update
   #   apt-get install -y apache2
   SHELL

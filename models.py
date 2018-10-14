@@ -36,6 +36,20 @@ class Recommendation(object):
             raise DataValidationError('name attribute is not set')
         self.recommendations.append(self)
 
+    def delete(self):
+        """ Deletes a Recommendation from the database """
+        target_index = -1
+        for i in range(len(self.recommendations)): 
+            if (self.recommendations[i].id == self.id): 
+                target_index = i
+                break
+
+        if target_index == -1: 
+            Recommendation.logger.info('Unable to delete Recommendation with id %s', self.id)
+        else: 
+            del self.recommendations[target_index]
+
+
 ######################################################################
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
@@ -49,5 +63,18 @@ class Recommendation(object):
     @staticmethod
     def all():
         """ Query that returns all recommendations """
-        return Recommendation.recommendations; 
+        return Recommendation.recommendations
 
+
+######################################################################
+#  F I N D E R   M E T H O D S
+######################################################################
+
+    @staticmethod
+    def find(recommendation_id):
+        """ Query that finds Pets by their id """
+        for recommendation in Recommendation.recommendations: 
+            if recommendation.id == recommendation_id: 
+                return recommendation
+
+        return None

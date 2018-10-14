@@ -19,9 +19,53 @@ class TestRecommendations(unittest.TestCase):
 		# Recommendation.init_db()
 		Recommendation.remove_all()
 
+	def test_create_a_recommendation(self): 
+		recommendation = Recommendation(0, "name", "suggestion", "category")
+		self.assertNotEqual(recommendation, None)
+		self.assertEqual(recommendation.id, 0)
+		self.assertEqual(recommendation.name, "name")
+		self.assertEqual(recommendation.suggestion, "suggestion")
+		self.assertEqual(recommendation.category, "category")
+
 	def test_delete_a_recommendation(self): 
 		recommendation = Recommendation(0, "name", "recommended", "category")
 		recommendation.save()
 		self.assertEqual(len(Recommendation.all()), 1)
 		recommendation.delete()
 		self.assertEqual(len(Recommendation.all()), 0)
+
+	def test_find_a_recommendation(self):
+		self.assertIsNone(Recommendation.find(0))
+		recommendation = Recommendation(0, "name", "recommended", "category")
+		recommendation.save()
+		self.assertEqual(Recommendation.find(0).name, recommendation.name)
+		self.assertEqual(Recommendation.find(0).suggestion, recommendation.suggestion)
+
+	def test_update_a_recommendation(self):
+		recommendation = Recommendation(0, "name", "recommended", "category")
+		recommendation.save()
+
+		recommendation.category = "newCategory"
+		self.assertEqual(Recommendation.find(0).category, "category")
+		recommendation.update()
+		self.assertEqual(Recommendation.find(0).category, "newCategory")
+
+	def test_find_by_category(self): 
+		Recommendation(0, "name1", "recommended1", "category1").save()
+		Recommendation(0, "name2", "recommended2", "category2").save()
+		recommendations = Recommendation.find_by_category("category1")
+		self.assertEqual(len(recommendations), 1)
+		self.assertEqual(recommendations[0].category, "category1")
+
+	def test_find_by_suggestion(self): 
+		Recommendation(0, "name1", "suggestion1", "category1").save()
+		Recommendation(0, "name2", "suggestion2", "category2").save()
+		recommendations = Recommendation.find_by_suggestion("suggestion1")
+		self.assertEqual(len(recommendations), 1)
+		self.assertEqual(recommendations[0].category, "suggestion1")
+
+######################################################################
+#   M A I N
+######################################################################
+if __name__ == '__main__':
+    unittest.main()

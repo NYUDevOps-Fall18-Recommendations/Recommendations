@@ -62,7 +62,7 @@ class TestRecommendations(unittest.TestCase):
 		Recommendation(0, "name2", "suggestion2", "category2").save()
 		recommendations = Recommendation.find_by_suggestion("suggestion1")
 		self.assertEqual(len(recommendations), 1)
-		self.assertEqual(recommendations[0].category, "suggestion1")
+		self.assertEqual(recommendations[0].suggestion, "suggestion1")
 
 ######################################################################
 #   M A I N

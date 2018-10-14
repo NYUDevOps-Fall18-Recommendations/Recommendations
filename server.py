@@ -22,22 +22,6 @@ def index():
     """ Send back the home page """
     return 'Hello World'
 
-
-######################################################################
-# DELETE A Recommendation
-######################################################################
-@app.route('/recommendations/<int:recommendation_id>', methods=['DELETE'])
-def delete_recommendations(recommendation_id):
-    """
-    Delete a Recommendation
-    This endpoint will delete a Recommendation based the id specified in the path
-    """
-    recommendation = Recommendation.find(recommendation_id)
-    if recommendation:
-        recommendation.delete()
-    return make_response('', HTTP_204_NO_CONTENT)
-
-
 ######################################################################
 #   M A I N
 ######################################################################

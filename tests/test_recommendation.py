@@ -32,10 +32,9 @@ class TestRecommendations(unittest.TestCase):
 		recommendation.save()
 		self.assertEqual(Recommendation.find(0), recommendation)
 
+
 ######################################################################
 #   M A I N
 ######################################################################
 if __name__ == '__main__':
     unittest.main()
-    # suite = unittest.TestLoader().loadTestsFromTestCase(TestPets)
-    # unittest.TextTestRunner(verbosity=2).run(suite)

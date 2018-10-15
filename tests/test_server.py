@@ -37,4 +37,4 @@ class TestRecommendationServer(unittest.TestCase):
 
 	def tearDown(self):
 		"""Runs towards the end of each test"""
-		Recommendation.recommendations.clear()
+		Recommendation.recommendations.remove_all()

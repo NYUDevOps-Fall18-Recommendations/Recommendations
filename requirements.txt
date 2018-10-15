@@ -23,5 +23,5 @@ httpie==0.9.9
 coverage==4.2
 codecov==2.0.15
 
-#DB
-#redis>=2.10
+# DB
+# redis>=2.10

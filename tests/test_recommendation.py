@@ -34,6 +34,47 @@ class TestRecommendations(unittest.TestCase):
 		recommendation.delete()
 		self.assertEqual(len(Recommendation.all()), 0)
 
+	def test_serialize_a_recommendation(self):
+		""" Test serialization of a Recommendation """
+		recommendation = Recommendation(0, "iPhone", "Pixel", "Digital Prodct")
+		data = recommendation.serialize()
+		self.assertNotEqual(data, None)
+		self.assertEqual(data['id'], 0)
+		self.assertEqual(data['name'], "iPhone")
+		self.assertEqual(data['suggestion'], "Pixel")
+		self.assertEqual(data['category'], "Digital Prodct")
+
+	def test_deserialize_a_recommendation(self):
+		data = {"id": 1, "name": "iPhone", "suggestion": "Pixel", "category": "Digital Prodct"}
+		recommendation = Recommendation()
+		recommendation.deserialize(data)
+		self.assertNotEqual(recommendation, None)
+		self.assertEqual(recommendation.id, 1) # id should be ignored
+		self.assertEqual(recommendation.name, "iPhone")
+		self.assertEqual(recommendation.suggestion, "Pixel")
+		self.assertEqual(recommendation.category, "Digital Prodct")
+		# test with id passed into constructor
+		recommendation = Recommendation(1)
+		recommendation.deserialize(data)
+		self.assertNotEqual(recommendation, None)
+		self.assertEqual(recommendation.id, 1) # id should be ignored
+		self.assertEqual(recommendation.name, "iPhone")
+		self.assertEqual(recommendation.suggestion, "Pixel")
+		self.assertEqual(recommendation.category, "Digital Prodct")
+
+	def test_deserialize_with_no_name(self):
+		recommendation = Recommendation()
+		data = {"id": 1, "suggestion": "Pixel", "category": "Digital Prodct"}
+		self.assertRaises(DataValidationError, recommendation.deserialize, data)
+
+	def test_deserialize_with_no_data(self):
+		recommendation = Recommendation(0)
+		self.assertRaises(DataValidationError, recommendation.deserialize, None)
+
+	def test_deserialize_with_bad_data(self):
+		recommendation = Recommendation(0)
+		self.assertRaises(DataValidationError, recommendation.deserialize, "string data")
+
 	def test_find_a_recommendation(self):
 		self.assertIsNone(Recommendation.find(0))
 		recommendation = Recommendation(0, "name", "recommended", "category")

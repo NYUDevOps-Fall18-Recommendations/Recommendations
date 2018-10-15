@@ -58,6 +58,27 @@ class Recommendation(object):
             return
         Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
 
+    def serialize(self):
+        """ Serializes a Recommendation into a dictionary """
+        return {"id": self.id, "name": self.name, "suggestion": self.suggestion, "category": self.category}
+
+    def deserialize(self, data):
+        """
+        Deserializes a Recommendation from a dictionary
+        Args:
+            data (dict): A dictionary containing the Recommendation data
+        """
+        if not isinstance(data, dict):
+            raise DataValidationError('Invalid recommendation: body of request contained bad or no data')
+        try:
+            self.id = data['id']
+            self.name = data['name']
+            self.suggestion = data['suggestion']
+            self.category = data['category']
+        except KeyError as err:
+            raise DataValidationError('Invalid pet: missing ' + err.args[0])
+        return
+
 
 ######################################################################
 #  S T A T I C   D A T A B S E   M E T H O D S

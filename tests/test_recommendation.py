@@ -44,7 +44,7 @@ class TestRecommendations(unittest.TestCase):
 		self.assertEqual(data['suggestion'], "Pixel")
 		self.assertEqual(data['category'], "Digital Prodct")
 
-	def test_deserialize_a_pet(self):
+	def test_deserialize_a_recommendation(self):
 		data = {"id": 1, "name": "iPhone", "suggestion": "Pixel", "category": "Digital Prodct"}
 		recommendation = Recommendation()
 		recommendation.deserialize(data)

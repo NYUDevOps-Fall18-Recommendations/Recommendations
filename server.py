@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask_api import status    # HTTP Status Codes
 from models import Recommendation, DataValidationError
 
 
@@ -76,26 +77,21 @@ def index():
 ######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['POST'])
+@app.route('/recommendation', methods=['POST'])
 def create_recommendation():
     """
     Creates a recommendations
     This end point will create a recommendation based on the data in the body
     """
-
-    if request.headers['Content-Type'] != 'application/json':
-        app.logger.error('Invalid Content-type: %s', request.headers['application/json'] )
-        abort(415, 'Content-Type must be {}'.format('application/json'))
-    else:
-        recommendation = Recommendation()
-        recommendation.deserialize(request.get_json())
-        recommendation.save()
-        message = recommendation.serialize()
-        location_url = url_for('get_recommendation', id=recommendation.id, _external=TRUE)
-        return make_response(jsonify(message), status.HTTP_201_CREATED,
-                            {
-                                'Location': location_url
-                            })
+    recommendation = Recommendation()
+    recommendation.deserialize(request.get_json())
+    recommendation.save()
+    message = recommendation.serialize()
+    #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED)
+#                         {
+#                             'Location': location_url
+#                         })
 
 
 ######################################################################

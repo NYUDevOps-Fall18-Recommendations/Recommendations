@@ -3,6 +3,7 @@
 **Steps to run and test the app:** 
 * run command "vagrant up"
 * run command "vagrant ssh"
+* run command "cd /vagrant"
 * run command "nosetests"
 
 

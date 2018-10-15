@@ -1,12 +1,16 @@
 """
 Pet API Service Test Suite
 Test cases can be run with the following:
-nosetests 
+nosetests
 """
 
 import unittest
 import logging
 import json
+import os
+from mock import MagicMock, patch
+
+from models import Recommendation, DataValidationError
 import server
 
 # Status Codes
@@ -23,3 +27,14 @@ HTTP_409_CONFLICT = 409
 ######################################################################
 class TestRecommendationServer(unittest.TestCase):
 	""" Recommendation Service tests """
+
+	def setUp(self):
+		"""Runs before each test"""
+		self.app = server.app.test_clinet()
+		Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
+		Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
+
+
+	def tearDown(self):
+		"""Runs towards the end of each test"""
+		Recommendation.recommendations.clear()

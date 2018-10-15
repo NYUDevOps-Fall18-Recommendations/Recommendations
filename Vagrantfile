@@ -68,14 +68,13 @@ Vagrant.configure("2") do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get install -y git python-pip python-dev
-    sudo apt-get -y autoremove
-
-    pip install --upgrade pip
-
+    apt-get update
+    apt-get install -y git python-pip python-dev build-essential
+    apt-get -y autoremove
+    #pip install --upgrade pip
+    # Install app dependencies
     cd /vagrant
-    sudo -u ubuntu echo "colorscheme desert" > ~/.vimrc
+    pip install -r requirements.txt
   #   apt-get update
   #   apt-get install -y apache2
   SHELL

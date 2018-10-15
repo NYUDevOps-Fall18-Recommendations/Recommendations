@@ -1,7 +1,7 @@
 """
 Pet API Service Test Suite
 Test cases can be run with the following:
-nosetests 
+nosetests
 """
 
 import unittest
@@ -23,3 +23,6 @@ HTTP_409_CONFLICT = 409
 ######################################################################
 class TestRecommendationServer(unittest.TestCase):
 	""" Recommendation Service tests """
+
+def test_create_recommendation(self):
+	""" Create a new Recommendation"""

@@ -60,4 +60,26 @@ class TestRecommendationServer(unittest.TestCase):
 		self.assertEqual(resp.status_code, status.HTTP_200_OK)
         #new_json = json.loads(resp.data)
         #self.assertEqual(new_json['category'], 'Comics')
+
+	def test_query_recommendation_by_category(self):
+		""" Query Recommendations by Category """
+		resp = self.app.get('/recommendation', query_string='category=Comics')
+		self.assertEqual(resp.status_code, status.HTTP_200_OK)
+		self.assertGreater(len(resp.data), 0)
+		self.assertIn('Infinity Gauntlet', resp.data)
+		self.assertNotIn('iPhone', resp.data)
+		data = json.loads(resp.data)
+		query_item = data[0]
+		self.assertEqual(query_item['category'], 'Comics')
+
+	def test_query_recommendation_by_suggestion(self):
+		""" Query Recommendations by Suggestion """
+		resp = self.app.get('/recommendation', query_string='suggestion=iphone Case')
+		self.assertEqual(resp.status_code, status.HTTP_200_OK)
+		self.assertGreater(len(resp.data), 0)
+		self.assertIn('iPhone', resp.data)
+		self.assertNotIn('Infinity Gauntlet', resp.data)
+		data = json.loads(resp.data)
+		query_item = data[0]
+		self.assertEqual(query_item['suggestion'], 'iphone Case')
         

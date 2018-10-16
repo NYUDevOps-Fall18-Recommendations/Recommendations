@@ -51,7 +51,7 @@ class TestRecommendationServer(unittest.TestCase):
         #new_json = json.loads(resp.data)
         #self.assertEqual(new_json['name'], 'Table')
 
-    def test_update_recommendation(self):
+	def test_update_recommendation(self):
 		""" Update an existing recommendation """
         recommendation = Recommendation.find_by_category('Electronics')
         new_recommedation = dict(id=3, name='iPhone', suggestion='iphone pop ups', category='Electronics')

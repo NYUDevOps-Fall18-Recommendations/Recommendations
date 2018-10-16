@@ -97,7 +97,7 @@ def create_recommendation():
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendations/<int:id>', methods=['PUT'])
+@app.route('/recommendation/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """
     Update a recommendation
@@ -105,7 +105,7 @@ def update_recommendation(id):
     """
     recommendation = Recommendation.find(id)
     if not recommendation:
-        abort(HTTP_404_NOT_FOUND,"Recommendation with id '{}' was not found.".format(id))
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
     recommendation.save()

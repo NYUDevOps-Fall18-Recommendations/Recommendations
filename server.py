@@ -103,10 +103,10 @@ def list_recommendations():
     if category:
         app.logger.info('Getting Recommendations for category: {}'.format(category))
         results = Recommendation.find_by_category(category)
-else:
-    app.logger.info('Getting all Recommendations')
-    results = Recommendation.all()
-return jsonify([recommendation.serialize() for recommendation in results]), status.HTTP_200_OK
+    else:
+        app.logger.info('Getting all Recommendations')
+        results = Recommendation.all()
+    return jsonify([recommendation.serialize() for recommendation in results]), status.HTTP_200_OK
 
 ######################################################################
 #   M A I N

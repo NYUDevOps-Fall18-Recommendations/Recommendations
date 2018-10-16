@@ -75,6 +75,21 @@ def index():
     return 'Hello World'
 
 ######################################################################
+# RETRIEVE A RECOMMENDATION BY ID
+######################################################################
+@app.route('/recommendation/<int:id>', methods=['GET'])
+def get_recommendation(id):
+    """
+    Retrieve a single recommendation
+
+    This endpoint will return a recommendation based on it's id
+    """
+    recommendation = Recommendation.find(id)
+    if not recommendation:
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+    return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
+    
+######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
 @app.route('/recommendation', methods=['POST'])

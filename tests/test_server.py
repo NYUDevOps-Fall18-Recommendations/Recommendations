@@ -34,7 +34,6 @@ class TestRecommendationServer(unittest.TestCase):
 		Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
 		Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
 
-
 	def tearDown(self):
 		"""Runs towards the end of each test"""
 		Recommendation.remove_all()
@@ -54,13 +53,13 @@ class TestRecommendationServer(unittest.TestCase):
 
     def test_update_recommendation(self):
 		""" Update an existing recommendation """
-        recommendation = Recommendation.find(id)
-        new_recommedation = dict(id=9999, name='Table', suggestion='Desk', category='Home Appliances')
+        recommendation = Recommendation.find_by_category('Electronics')[0]
+        new_recommedation = dict(id=3, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
         resp = self.app.put('/recommendation/{}'.format(id),
                             data=data,
                             content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        #new_json = json.loads(resp.data)
-        #self.assertEqual(new_json['name'], 'Table')
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['category'], 'Comics')
         

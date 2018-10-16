@@ -105,7 +105,7 @@ def update_recommendation(id):
     """
     recommendation = Recommendation.find(id)
     if not recommendation:
-        raise NotFound("Recommendation with id '{}' was not found.".format(id))
+        abort(HTTP_404_NOT_FOUND,"Recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
     recommendation.save()

@@ -55,7 +55,7 @@ class TestRecommendationServer(unittest.TestCase):
     def test_update_recommendation(self):
 		""" Update an existing recommendation """
         recommendation = Recommendation.find(id)
-        new_recommedation = dict(id=, name='Table', suggestion='Computer Desk', category='Home Appliances')
+        new_recommedation = dict(id=9999, name='Table', suggestion='Desk', category='Home Appliances')
         data = json.dumps(new_recommedation)
         resp = self.app.put('/recommendation/{}'.format(id),
                             data=data,

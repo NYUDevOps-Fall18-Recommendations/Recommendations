@@ -53,7 +53,7 @@ class TestRecommendationServer(unittest.TestCase):
 
     def test_update_recommendation(self):
 		""" Update an existing recommendation """
-        recommendation = Recommendation.find_by_category('Electronics')[0]
+        recommendation = Recommendation.find_by_category('Electronics')
         new_recommedation = dict(id=3, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
         resp = self.app.put('/recommendation/{}'.format(id),

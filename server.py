@@ -97,7 +97,7 @@ def create_recommendation():
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
+@app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """
     Update a recommendation

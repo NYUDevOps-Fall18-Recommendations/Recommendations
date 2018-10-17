@@ -118,11 +118,7 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.save()
     message = recommendation.serialize()
-    #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED)
-#                         {
-#                             'Location': location_url
-#                         })
 
 
 ######################################################################
@@ -132,7 +128,7 @@ def create_recommendation():
 def get_recommendation_by_category(catName):
     recommendation = Recommendation()
 
-@app.route('/recommendation/<int:id>', methods=['PUT'])
+@app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """
     Update a recommendation

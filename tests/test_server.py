@@ -50,36 +50,19 @@ class TestRecommendationServer(unittest.TestCase):
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
-        # Make sure location header is set
-    #location = resp.headers.get('Location', None)
-    #self.assertTrue(location != None)
-    # Check the data is correct
-    #new_json = json.loads(resp.data)
-    #self.assertEqual(new_json['name'], 'Table')
 
     def test_list_all_recommendations(self):
         resp = self.app.get('/recommendations')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
-
-    # def test_query_recommendation_list_by_category(self):
-    #     resp = self.app.get('/recommendations', query_string='category=Comics')
-    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    #     self.assertTrue(len(resp.data) > 0)
-    #     self.assertTrue('Infinity Gauntlet' in resp.data)
-    #     self.assertFalse('iPhone' in resp.data)
-    #     data = json.loads(resp.data)
-    #     query_item = data[0]
-    #     self.assertEqual(query_item['category'], 'Comics')
-    #     self.assertEqual(len(data), 2)      
    
     def test_update_recommendation(self):
         """ Update an existing recommendation """
         recommendation = Recommendation.find(2)
         new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
-        resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
+        resp = self.app.put('/recommendations/{}'.format(2), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')

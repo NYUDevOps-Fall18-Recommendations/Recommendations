@@ -143,7 +143,7 @@ def update_recommendation(id):
     """
     recommendation = Recommendation.find(id)
     if not recommendation:
-        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+        raise NotFound("recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
     recommendation.save()
@@ -163,8 +163,6 @@ def query_recommendations():
         recommendations = Recommendation.find_by_category(category)
     elif suggestion:
         recommendations = Recommendation.find_by_suggestion(suggestion)
-    else:
-        recommendations = Recommendation.all()
     results = [recommendation.serialize() for recommendation in recommendations]
     return make_response(jsonify(results), status.HTTP_200_OK)
 

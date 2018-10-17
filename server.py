@@ -110,6 +110,27 @@ def create_recommendation():
 
 
 ######################################################################
+# UPDATE RECOMMENDATION
+######################################################################
+@app.route('/recommendation/<int:id>', methods=['PUT'])
+def update_recommendation(id):
+    """
+    Update a recommendation
+    This end point will update a recommendation based on the data in the body
+    """
+    recommendation = Recommendation.find(id)
+    if not recommendation:
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+    recommendation.deserialize(request.get_json())
+    recommendation.id = id
+    recommendation.save()
+    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
+
+
+
+
+######################################################################
 #   M A I N
 ######################################################################
 if __name__ == "__main__":

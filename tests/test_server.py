@@ -34,9 +34,21 @@ class TestRecommendationServer(unittest.TestCase):
         Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
         Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
 
+
     def tearDown(self):
         """Runs towards the end of each test"""
         Recommendation.remove_all()
+
+        
+    def tearDown(self):
+        """Runs towards the end of each test"""
+        Recommendation.remove_all()
+        
+    def test_get_recommendation(self):
+        resp = self.app.get('/recommendation/2')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['name'], 'iPhone')
 
     def test_create_recommendation(self):
         """ Create a new recommendation """
@@ -45,11 +57,7 @@ class TestRecommendationServer(unittest.TestCase):
         resp = self.app.post('/recommendation', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         # Make sure location header is set
-    #location = resp.headers.get('Location', None)
-    #self.assertTrue(location != None)
-    # Check the data is correct
-    #new_json = json.loads(resp.data)
-    #self.assertEqual(new_json['name'], 'Table')
+
 
     def test_update_recommendation(self):
         """ Update an existing recommendation """
@@ -60,6 +68,7 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
+
 
     def test_query_recommendation_by_category(self):
         """ Query Recommendations by Category """
@@ -83,21 +92,4 @@ class TestRecommendationServer(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['suggestion'], 'iphone Case')
 
-    def test_get_recommendation(self):
-        resp = self.app.get('/recommendation/2')
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        data = json.loads(resp.data)
-        self.assertEqual(data['name'], 'iPhone')
-
-    def test_create_recommendation(self):
-        """ Create a new recommendation """
-        new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
-        data = json.dumps(new_recommenation)
-        resp = self.app.post('/recommendation', data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        # Make sure location header is set
-    #location = resp.headers.get('Location', None)
-    #self.assertTrue(location != None)
-    # Check the data is correct
-    #new_json = json.loads(resp.data)
-    #self.assertEqual(new_json['name'], 'Table')
+   

@@ -75,6 +75,22 @@ def index():
     return 'Hello World'
 
 ######################################################################
+# LIST ALL RECOMMENDATIONS
+######################################################################
+@app.route('/recommendation', methods=['GET'])
+def list_recommendations():
+    """ Retrieves a list of pets from the database """
+    app.logger.info('Listing pets')
+    results = []
+    category = request.args.get('category')
+    if category:
+        results = Recommendation.find_by_category(category)
+    else:
+        results = Recommendation.all()
+
+    return jsonify([rec.serialize() for rec in results]), HTTP_200_OK
+
+######################################################################
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
 @app.route('/recommendation/<int:id>', methods=['GET'])
@@ -108,20 +124,22 @@ def create_recommendation():
 #                             'Location': location_url
 #                         })
 
+
 ######################################################################
-# LIST ALL RECOMMENDATION
+# GET RECOMMENDAITON BY CATEGORY
 ######################################################################
-@app.route('/recommendations', methods=['GET'])
-def list_recommendations():
-    results = []
-    category = request.args.get('category')
-    if category:
-        app.logger.info('Getting Recommendations for category: {}'.format(category))
-        results = Recommendation.find_by_category(category)
-    else:
-        app.logger.info('Getting all Recommendations')
-        results = Recommendation.all()
-    return jsonify([recommendation.serialize() for recommendation in results]), status.HTTP_200_OK
+@app.route('/recommendation', methods=['POST'])
+def get_recommendation_by_category(catName):
+    recommendation = Recommendation()
+    recommendation.deserialize(request.get_json())
+    recommendation.save()
+    message = recommendation.serialize()
+    #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED)
+#                         {
+#                             'Location': location_url
+#                         })
+
 
 ######################################################################
 #   M A I N

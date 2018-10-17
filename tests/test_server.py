@@ -46,36 +46,25 @@ class TestRecommendationServer(unittest.TestCase):
     
     def test_create_recommendation(self):
           """ Create a new recommendation """
-          new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
-          data = json.dumps(new_recommenation)
-          resp = self.app.post('/recommendation', data=data, content_type='application/json')
-          self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-          # Make sure location header is set
-      #location = resp.headers.get('Location', None)
-      #self.assertTrue(location != None)
-      # Check the data is correct
-      #new_json = json.loads(resp.data)
-      #self.assertEqual(new_json['name'], 'Table')
+        new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
+        data = json.dumps(new_recommenation)
+        resp = self.app.post('/recommendation', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # Make sure location header is set
+        #location = resp.headers.get('Location', None)
+        #self.assertTrue(location != None)
+        # Check the data is correct
+        #new_json = json.loads(resp.data)
+        #self.assertEqual(new_json['name'], 'Table')
       
-  def test_create_recommendation(self):
-      """ Create a new recommendation """
-      new_recommendation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
-      data = json.dumps(new_recommendation)
-      resp = self.app.post('/recommendation', data=data, content_type='application/json')
-      self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-      # Make sure location header is set
-          #location = resp.headers.get('Location', None)
-          #self.assertTrue(location != None)
-          # Check the data is correct
-          #new_json = json.loads(resp.data)
-          #self.assertEqual(new_json['name'], 'Table')
+   
 
     def test_update_recommendation(self):
         """ Update an existing recommendation """
         recommendation = Recommendation.find(2)
-        new_recommedation = dict(id=3, name='iPhone', suggestion='iphone pop ups', category='Electronics')
+        new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
         resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-            #new_json = json.loads(resp.data)
-            #self.assertEqual(new_json['category'], 'Comics')
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['suggestion'], 'iphone pop ups')

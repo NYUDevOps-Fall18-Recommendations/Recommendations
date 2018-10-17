@@ -53,7 +53,7 @@ class TestRecommendationServer(unittest.TestCase):
     def test_create_recommendation(self):
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
-        resp = self.app.post('/recommendation', data=data, content_type='application/json')
+        resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         # Make sure location header is set
 
@@ -108,9 +108,9 @@ class TestRecommendationServer(unittest.TestCase):
         new_count = self.get_recommendation_count()
         self.assertEqual(new_count, recommendation_count - 1)
 
-    ######################################################################
-	  # Utility functions
-	  ######################################################################
+######################################################################
+# Utility functions
+######################################################################
 
     def get_recommendation_count(self):
         """ save the current number of recommendations """
@@ -122,6 +122,6 @@ class TestRecommendationServer(unittest.TestCase):
  ######################################################################
  #   M A I N
  ######################################################################
- if __name__ == '__main__':
-      unittest.main()
+if __name__ == '__main__':
+    unittest.main()
 

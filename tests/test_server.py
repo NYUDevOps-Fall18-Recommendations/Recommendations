@@ -77,3 +77,9 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = json.loads(resp.data)
         return len(data)
+
+######################################################################
+#   M A I N
+######################################################################
+if __name__ == '__main__':
+    unittest.main()

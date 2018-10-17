@@ -88,7 +88,7 @@ def get_recommendation(id):
     if not recommendation:
         abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
     return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
-    
+
 ######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
@@ -108,6 +108,20 @@ def create_recommendation():
 #                             'Location': location_url
 #                         })
 
+######################################################################
+# LIST ALL RECOMMENDATION
+######################################################################
+@app.route('/recommendation', methods=['GET'])
+def list_recommendations():
+    results = []
+    category = request.args.get('category')
+    if category:
+        app.logger.info('Getting Recommendations for category: {}'.format(category))
+        results = Recommendation.find_by_category(category)
+    else:
+        app.logger.info('Getting all Recommendations')
+        results = Recommendation.all()
+    return jsonify([recommendation.serialize() for recommendation in results]), status.HTTP_200_OK
 
 ######################################################################
 # UPDATE RECOMMENDATION

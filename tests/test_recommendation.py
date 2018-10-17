@@ -16,7 +16,7 @@ class TestRecommendations(unittest.TestCase):
 	""" Test Cases for Recommendation Model """
 
 	def setUp(self):
-		# Recommendation.init_db()
+		#Recommendation.init_db()
 		Recommendation.remove_all()
 
 	def test_create_a_recommendation(self): 
@@ -75,6 +75,19 @@ class TestRecommendations(unittest.TestCase):
 		recommendation = Recommendation(0)
 		self.assertRaises(DataValidationError, recommendation.deserialize, "string data")
 
+	def test_list_all_recommendations(self):
+		recommendation1 = Recommendation(0, "name1", "suggestion1", "category1").save()
+		recommendation2 = Recommendation(1, "name2", "suggestion1", "category1").save()
+		recommendation3 = Recommendation(2, "name3", "suggestion2", "category2").save()
+		recommendation4 = Recommendation(4, "name4", "suggestion3", "category3").save()
+
+ 		#resp = self.app.get('/recommendation') 
+		#self.assertEqual( resp.status_code, status.HTTP_200_OK )
+		recommendations = []
+		for i in Recommendation.all():
+			recommendations.append(i)
+		self.assertEquals( len(recommendations), 4)
+
 	def test_find_a_recommendation(self):
 		self.assertIsNone(Recommendation.find(0))
 		recommendation = Recommendation(0, "name", "recommended", "category")
@@ -111,4 +124,5 @@ class TestRecommendations(unittest.TestCase):
 #   M A I N
 ######################################################################
 if __name__ == '__main__':
-    unittest.main()
+	Recommendation.initialize()
+	unittest.main()

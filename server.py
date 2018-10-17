@@ -77,7 +77,7 @@ def index():
 ######################################################################
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['GET'])
+@app.route('/recommendations/<int:id>', methods=['GET'])
 def get_recommendation(id):
     """
     Retrieve a single recommendation
@@ -92,7 +92,7 @@ def get_recommendation(id):
 ######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
+@app.route('/recommendations', methods=['POST'])
 def create_recommendation():
     """
     Creates a recommendations
@@ -103,7 +103,7 @@ def create_recommendation():
     recommendation.save()
     message = recommendation.serialize()
     #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    return make_response(jsonify(message), HTTP_201_CREATED)
 #                         {
 #                             'Location': location_url
 #                         })
@@ -112,7 +112,7 @@ def create_recommendation():
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['PUT'])
+@app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """
     Update a recommendation
@@ -124,10 +124,7 @@ def update_recommendation(id):
     recommendation.deserialize(request.get_json())
     recommendation.id = id
     recommendation.save()
-    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
-
-
-
+    return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
 
 
 ######################################################################

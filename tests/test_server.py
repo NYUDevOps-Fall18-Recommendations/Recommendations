@@ -71,9 +71,7 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
-
-
-
+        
     def test_query_recommendation_by_category(self):
         """ Query Recommendations by Category """
         resp = self.app.get('/recommendation', query_string='category=Comics')

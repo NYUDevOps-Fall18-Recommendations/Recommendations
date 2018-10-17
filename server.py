@@ -111,7 +111,7 @@ def create_recommendation():
 ######################################################################
 # LIST ALL RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['GET'])
+@app.route('/recommendations', methods=['GET'])
 def list_recommendations():
     results = []
     category = request.args.get('category')

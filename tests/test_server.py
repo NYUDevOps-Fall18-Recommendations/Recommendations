@@ -56,3 +56,10 @@ class TestRecommendationServer(unittest.TestCase):
     # Check the data is correct
     #new_json = json.loads(resp.data)
     #self.assertEqual(new_json['name'], 'Table')
+
+    def test_get_recommendation_list(self):
+        """ Get a list of Pets """
+        resp = self.app.get('/recommendations')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)

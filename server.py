@@ -75,9 +75,25 @@ def index():
     return 'Hello World'
 
 ######################################################################
+# LIST ALL RECOMMENDATIONS
+######################################################################
+@app.route('/recommendations', methods=['GET'])
+def list_recommendations():
+    """ Retrieves a list of pets from the database """
+    app.logger.info('Listing pets')
+    results = []
+    category = request.args.get('category')
+    if category:
+        results = Recommendation.find_by_category(category)
+    else:
+        results = Recommendation.all()
+
+    return jsonify([rec.serialize() for rec in results]), HTTP_200_OK
+
+######################################################################
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['GET'])
+@app.route('/recommendations/<int:id>', methods=['GET'])
 def get_recommendation(id):
     """
     Retrieve a single recommendation
@@ -92,7 +108,7 @@ def get_recommendation(id):
 ######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
+@app.route('/recommendations', methods=['POST'])
 def create_recommendation():
     """
     Creates a recommendations
@@ -102,17 +118,24 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.save()
     message = recommendation.serialize()
-    #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED)
-#                         {
-#                             'Location': location_url
-#                         })
 
+######################################################################
+# DELETE A Recommendation
+######################################################################
+@app.route('/recommendations/<int:recommendation_id>', methods=['DELETE'])
+def delete_recommendations(recommendation_id):
+    """ Removes a Recommendation from the database that matches the id """
+    app.logger.info('Deleting a Recommendation with id [{}]'.format(recommendation_id))
+    recommendation = Recommendation.find(recommendation_id)
+    if recommendation:
+        recommendation.delete()
+    return make_response('', HTTP_204_NO_CONTENT)
 
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['PUT'])
+@app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """
     Update a recommendation
@@ -125,6 +148,7 @@ def update_recommendation(id):
     recommendation.id = id
     recommendation.save()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 # QUERY RECOMMENDATION
@@ -143,6 +167,7 @@ def query_recommendations():
         recommendations = Recommendation.all()
     results = [recommendation.serialize() for recommendation in recommendations]
     return make_response(jsonify(results), status.HTTP_200_OK)
+
 
 ######################################################################
 #   M A I N

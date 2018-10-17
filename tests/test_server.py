@@ -67,6 +67,17 @@ class TestRecommendationServer(unittest.TestCase):
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
+    def test_delete_recommendation(self):
+        """ Delete a Recommendation that exists """
+        # save the current number of pets for later comparrison
+        recommendation_count = self.get_recommendation_count()
+        # delete a pet
+        resp = self.app.delete('/recommendations/2', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_recommendation_count()
+        self.assertEqual(new_count, recommendation_count - 1)
+
     ######################################################################
 	# Utility functions
 	######################################################################

@@ -25,11 +25,8 @@ HTTP_409_CONFLICT = 409
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class Test
+class TestRecommendationServer(unittest.TestCase):
 
-
-
-erver(unittest.TestCase):
     """ Recommendation Service tests """
 
     def setUp(self):

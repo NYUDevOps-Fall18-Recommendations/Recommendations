@@ -70,8 +70,8 @@ class TestRecommendationServer(unittest.TestCase):
 
     def test_create_recommendation_no_content_type(self):
         """ Create a recommendation with no Content-Type """
-        new_pet = {'category': 'Sports'}
-        data = json.dumps(new_pet)
+        new_recommedation = {'category': 'Sports'}
+        data = json.dumps(new_recommedation)
         resp = self.app.post('/recommendations', data=data)
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
@@ -115,16 +115,7 @@ class TestRecommendationServer(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['category'], 'Comics')
 
-    # def test_query_recommendation_by_suggestion(self):
-    #     """ Query Recommendations by Suggestion """
-    #     resp = self.app.get('/recommendations', query_string='suggestion=iphone Case')
-    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    #     self.assertGreater(len(resp.data), 0)
-    #     self.assertIn('iPhone', resp.data)
-    #     self.assertNotIn('Infinity Gauntlet', resp.data)
-    #     data = json.loads(resp.data)
-    #     query_item = data[0]
-    #     self.assertEqual(query_item['suggestion'], 'iphone Case')
+
 
 
 

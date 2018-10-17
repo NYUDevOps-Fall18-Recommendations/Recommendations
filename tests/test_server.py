@@ -71,7 +71,7 @@ class TestRecommendationServer(unittest.TestCase):
     def test_create_recommendation_no_content_type(self):
         """ Create a recommendation with no Content-Type """
         new_recommedation = {'category': 'Sports'}
-        data = json.dumps(new_pet)
+        data = json.dumps(new_recommedation)
         resp = self.app.post('/recommendations', data=data)
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
@@ -115,7 +115,7 @@ class TestRecommendationServer(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['category'], 'Comics')
 
-    
+
 
 
 

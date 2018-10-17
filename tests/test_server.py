@@ -52,42 +52,42 @@ class TestRecommendationServer(unittest.TestCase):
     #self.assertEqual(new_json['name'], 'Table')
 
     def test_update_recommendation(self):
-      """ Update an existing recommendation """
-      recommendation = Recommendation.find(2)
-      new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
-      data = json.dumps(new_recommedation)
-      resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
-      self.assertEqual(resp.status_code, status.HTTP_200_OK)
-      new_json = json.loads(resp.data)
-      self.assertEqual(new_json['suggestion'], 'iphone pop ups')
+        """ Update an existing recommendation """
+        recommendation = Recommendation.find(2)
+        new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
+        data = json.dumps(new_recommedation)
+        resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
     def test_query_recommendation_by_category(self):
-      """ Query Recommendations by Category """
-      resp = self.app.get('/recommendation', query_string='category=Comics')
-      self.assertEqual(resp.status_code, status.HTTP_200_OK)
-      self.assertGreater(len(resp.data), 0)
-      self.assertIn('Infinity Gauntlet', resp.data)
-      self.assertNotIn('iPhone', resp.data)
-      data = json.loads(resp.data)
-      query_item = data[0]
-      self.assertEqual(query_item['category'], 'Comics')
+        """ Query Recommendations by Category """
+        resp = self.app.get('/recommendation', query_string='category=Comics')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('Infinity Gauntlet', resp.data)
+        self.assertNotIn('iPhone', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['category'], 'Comics')
 
     def test_query_recommendation_by_suggestion(self):
-      """ Query Recommendations by Suggestion """
-      resp = self.app.get('/recommendation', query_string='suggestion=iphone Case')
-      self.assertEqual(resp.status_code, status.HTTP_200_OK)
-      self.assertGreater(len(resp.data), 0)
-      self.assertIn('iPhone', resp.data)
-      self.assertNotIn('Infinity Gauntlet', resp.data)
-      data = json.loads(resp.data)
-      query_item = data[0]
-      self.assertEqual(query_item['suggestion'], 'iphone Case')
+        """ Query Recommendations by Suggestion """
+        resp = self.app.get('/recommendation', query_string='suggestion=iphone Case')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('iPhone', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['suggestion'], 'iphone Case')
 
     def test_get_recommendation(self):
-      resp = self.app.get('/recommendation/2')
-      self.assertEqual(resp.status_code, HTTP_200_OK)
-      data = json.loads(resp.data)
-      self.assertEqual(data['name'], 'iPhone')
+        resp = self.app.get('/recommendation/2')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['name'], 'iPhone')
 
     def test_create_recommendation(self):
         """ Create a new recommendation """

@@ -39,32 +39,55 @@ class TestRecommendationServer(unittest.TestCase):
         Recommendation.remove_all()
         
     def test_get_recommendation(self):
-        resp = self.app.get('/recommendation/2')
+        resp = self.app.get('/recommendations/2')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(data['name'], 'iPhone')
-    
+
     def test_create_recommendation(self):
-        """ Create a new recommendation """
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
-        resp = self.app.post('/recommendation', data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        # Make sure location header is set
-        #location = resp.headers.get('Location', None)
-        #self.assertTrue(location != None)
-        # Check the data is correct
-        #new_json = json.loads(resp.data)
-        #self.assertEqual(new_json['name'], 'Table')
-      
-   
+        resp = self.app.post('/recommendations', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
 
+    def test_list_all_recommendations(self):
+        resp = self.app.get('/recommendations')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)
+   
     def test_update_recommendation(self):
-        """ Update an existing recommendation """
         recommendation = Recommendation.find(2)
         new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
-        resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
+        resp = self.app.put('/recommendations/{}'.format(2), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
+
+    def test_delete_recommendation(self):
+        # save the current number of pets for later comparrison
+        recommendation_count = self.get_recommendation_count()
+        # delete a pet
+        resp = self.app.delete('/recommendations/2', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_recommendation_count()
+        self.assertEqual(new_count, recommendation_count - 1)
+
+    ######################################################################
+	# Utility functions
+	######################################################################
+
+    def get_recommendation_count(self):
+        """ save the current number of recommendations """
+        resp = self.app.get('/recommendations')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        return len(data)
+
+######################################################################
+#   M A I N
+######################################################################
+if __name__ == '__main__':
+    unittest.main()

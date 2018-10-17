@@ -35,7 +35,6 @@ class TestRecommendations(unittest.TestCase):
 		self.assertEqual(len(Recommendation.all()), 0)
 
 	def test_serialize_a_recommendation(self):
-		""" Test serialization of a Recommendation """
 		recommendation = Recommendation(0, "iPhone", "Pixel", "Digital Prodct")
 		data = recommendation.serialize()
 		self.assertNotEqual(data, None)

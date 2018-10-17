@@ -33,6 +33,12 @@ class TestRecommendationServer(unittest.TestCase):
         self.app = server.app.test_client()
         Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
         Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
+
+
+    def tearDown(self):
+        """Runs towards the end of each test"""
+        Recommendation.remove_all()
+
         
     def tearDown(self):
         """Runs towards the end of each test"""
@@ -48,7 +54,8 @@ class TestRecommendationServer(unittest.TestCase):
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # Make sure location header is set
 
     def test_list_all_recommendations(self):
         resp = self.app.get('/recommendations')
@@ -65,6 +72,32 @@ class TestRecommendationServer(unittest.TestCase):
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
+
+
+    def test_query_recommendation_by_category(self):
+        """ Query Recommendations by Category """
+        resp = self.app.get('/recommendation', query_string='category=Comics')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('Infinity Gauntlet', resp.data)
+        self.assertNotIn('iPhone', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['category'], 'Comics')
+
+    def test_query_recommendation_by_suggestion(self):
+        """ Query Recommendations by Suggestion """
+        resp = self.app.get('/recommendation', query_string='suggestion=iphone Case')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('iPhone', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['suggestion'], 'iphone Case')
+
+   
+
     def test_delete_recommendation(self):
         # save the current number of pets for later comparrison
         recommendation_count = self.get_recommendation_count()
@@ -75,9 +108,9 @@ class TestRecommendationServer(unittest.TestCase):
         new_count = self.get_recommendation_count()
         self.assertEqual(new_count, recommendation_count - 1)
 
-    ######################################################################
-	# Utility functions
-	######################################################################
+######################################################################
+# Utility functions
+######################################################################
 
     def get_recommendation_count(self):
         """ save the current number of recommendations """
@@ -86,8 +119,9 @@ class TestRecommendationServer(unittest.TestCase):
         data = json.loads(resp.data)
         return len(data)
 
-######################################################################
-#   M A I N
-######################################################################
+ ######################################################################
+ #   M A I N
+ ######################################################################
 if __name__ == '__main__':
     unittest.main()
+

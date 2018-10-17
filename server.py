@@ -124,10 +124,6 @@ def create_recommendation():
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendations', methods=['POST'])
-def get_recommendation_by_category(catName):
-    recommendation = Recommendation()
-
 @app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """

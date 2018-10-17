@@ -16,7 +16,7 @@ class TestRecommendations(unittest.TestCase):
 	""" Test Cases for Recommendation Model """
 
 	def setUp(self):
-		#Recommendation.init_db()
+		# Recommendation.init_db()
 		Recommendation.remove_all()
 
 	def test_create_a_recommendation(self): 
@@ -111,5 +111,4 @@ class TestRecommendations(unittest.TestCase):
 #   M A I N
 ######################################################################
 if __name__ == '__main__':
-	Recommendation.initialize()
-	unittest.main()
+    unittest.main()

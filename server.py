@@ -149,11 +149,10 @@ def update_recommendation(id):
     recommendation.save()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
-
 ######################################################################
 # QUERY RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['GET'])
+@app.route('/recommendations', methods=['GET'])
 def query_recommendations():
     """ Returns a list of recommendations by query """
     recommendations = []
@@ -167,7 +166,6 @@ def query_recommendations():
         recommendations = Recommendation.all()
     results = [recommendation.serialize() for recommendation in recommendations]
     return make_response(jsonify(results), status.HTTP_200_OK)
-
 
 ######################################################################
 #   M A I N

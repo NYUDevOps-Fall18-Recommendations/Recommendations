@@ -66,3 +66,14 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
+
+    ######################################################################
+	# Utility functions
+	######################################################################
+
+    def get_recommendation_count(self):
+        """ save the current number of recommendations """
+        resp = self.app.get('/recommendations')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        return len(data)

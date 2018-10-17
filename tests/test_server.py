@@ -45,7 +45,7 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(data['name'], 'iPhone')
     
     def test_create_recommendation(self):
-          """ Create a new recommendation """
+        """ Create a new recommendation """
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendation', data=data, content_type='application/json')

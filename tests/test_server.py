@@ -45,7 +45,6 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(data['name'], 'iPhone')
 
     def test_create_recommendation(self):
-        """ Create a new recommendation """
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
@@ -58,7 +57,6 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(len(data), 2)
    
     def test_update_recommendation(self):
-        """ Update an existing recommendation """
         recommendation = Recommendation.find(2)
         new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
         data = json.dumps(new_recommedation)
@@ -68,7 +66,6 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
     def test_delete_recommendation(self):
-        """ Delete a Recommendation that exists """
         # save the current number of pets for later comparrison
         recommendation_count = self.get_recommendation_count()
         # delete a pet

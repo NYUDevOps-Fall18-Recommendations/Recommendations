@@ -120,14 +120,21 @@ def create_recommendation():
     message = recommendation.serialize()
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
+######################################################################
+# DELETE A Recommendation
+######################################################################
+@app.route('/recommendations/<int:recommendation_id>', methods=['DELETE'])
+def delete_recommendations(recommendation_id):
+    """ Removes a Recommendation from the database that matches the id """
+    app.logger.info('Deleting a Recommendation with id [{}]'.format(recommendation_id))
+    recommendation = Recommendation.find(recommendation_id)
+    if recommendation:
+        recommendation.delete()
+    return make_response('', HTTP_204_NO_CONTENT)
 
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendations', methods=['POST'])
-def get_recommendation_by_category(catName):
-    recommendation = Recommendation()
-
 @app.route('/recommendations/<int:id>', methods=['PUT'])
 def update_recommendation(id):
     """

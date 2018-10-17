@@ -153,7 +153,7 @@ def update_recommendation(id):
 ######################################################################
 # QUERY RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['GET'])
+@app.route('/recommendations', methods=['GET'])
 def query_recommendations():
     """ Returns a list of recommendations by query """
     recommendations = []

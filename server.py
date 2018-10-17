@@ -150,22 +150,6 @@ def update_recommendation(id):
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# QUERY RECOMMENDATION
-######################################################################
-@app.route('/recommendations', methods=['GET'])
-def query_recommendations():
-    """ Returns a list of recommendations by query """
-    recommendations = []
-    category = request.args.get('category')
-    suggestion = request.args.get('suggestion')
-    if category:
-        recommendations = Recommendation.find_by_category(category)
-    elif suggestion:
-        recommendations = Recommendation.find_by_suggestion(suggestion)
-    results = [recommendation.serialize() for recommendation in recommendations]
-    return make_response(jsonify(results), status.HTTP_200_OK)
-
-######################################################################
 #   M A I N
 ######################################################################
 if __name__ == "__main__":

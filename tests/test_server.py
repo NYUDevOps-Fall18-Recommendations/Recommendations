@@ -33,17 +33,17 @@ class TestRecommendationServer(unittest.TestCase):
         self.app = server.app.test_client()
         Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
         Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
-
+        
     def tearDown(self):
         """Runs towards the end of each test"""
         Recommendation.remove_all()
-
+        
     def test_get_recommendation(self):
-		resp = self.app.get('/recommendation/2')
-		self.assertEqual(resp.status_code, HTTP_200_OK)
-		data = json.loads(resp.data)
-		self.assertEqual(data['name'], 'iPhone')
-
+        resp = self.app.get('/recommendation/2')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['name'], 'iPhone')
+    
     def test_create_recommendation(self):
         """ Create a new recommendation """
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
@@ -61,4 +61,14 @@ class TestRecommendationServer(unittest.TestCase):
         resp = self.app.get('/recommendation')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 2)      
+   
+    def test_update_recommendation(self):
+        """ Update an existing recommendation """
+        recommendation = Recommendation.find(2)
+        new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
+        data = json.dumps(new_recommedation)
+        resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['suggestion'], 'iphone pop ups')

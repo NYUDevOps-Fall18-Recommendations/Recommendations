@@ -126,20 +126,26 @@ def create_recommendation():
 
 
 ######################################################################
-# GET RECOMMENDAITON BY CATEGORY
+# UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
-def get_recommendation_by_category(catName):
-    recommendation = Recommendation()
+@app.route('/recommendation/<int:id>', methods=['PUT'])
+def update_recommendation(id):
+    """
+    Update a recommendation
+    This end point will update a recommendation based on the data in the body
+    """
+    recommendation = Recommendation.find(id)
+    if not recommendation:
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
+    recommendation.id = id
     recommendation.save()
-    message = recommendation.serialize()
-    #location_url = url_for('get_recommendation', id=recommendation.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
-#                         {
-#                             'Location': location_url
-#                         })
+    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
+
+
+
+  
 
 ######################################################################
 #   M A I N

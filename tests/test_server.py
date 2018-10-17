@@ -72,8 +72,6 @@ class TestRecommendationServer(unittest.TestCase):
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
-
-
     def test_query_recommendation_by_category(self):
         """ Query Recommendations by Category """
         resp = self.app.get('/recommendations', query_string='category=Comics')
@@ -95,8 +93,6 @@ class TestRecommendationServer(unittest.TestCase):
         data = json.loads(resp.data)
         query_item = data[0]
         self.assertEqual(query_item['suggestion'], 'iphone Case')
-
-   
 
     def test_delete_recommendation(self):
         # save the current number of pets for later comparrison

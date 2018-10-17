@@ -108,20 +108,6 @@ def create_recommendation():
 #                             'Location': location_url
 #                         })
 
-######################################################################
-# LIST ALL RECOMMENDATION
-######################################################################
-@app.route('/recommendation', methods=['GET'])
-def list_recommendations():
-    results = []
-    category = request.args.get('category')
-    if category:
-        app.logger.info('Getting Recommendations for category: {}'.format(category))
-        results = Recommendation.find_by_category(category)
-    else:
-        app.logger.info('Getting all Recommendations')
-        results = Recommendation.all()
-    return jsonify([recommendation.serialize() for recommendation in results]), status.HTTP_200_OK
 
 ######################################################################
 #   M A I N

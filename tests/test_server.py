@@ -115,16 +115,16 @@ class TestRecommendationServer(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['category'], 'Comics')
 
-    # def test_query_recommendation_by_suggestion(self):
-    #     """ Query Recommendations by Suggestion """
-    #     resp = self.app.get('/recommendations', query_string='suggestion=iphone Case')
-    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
-    #     self.assertGreater(len(resp.data), 0)
-    #     self.assertIn('iPhone', resp.data)
-    #     self.assertNotIn('Infinity Gauntlet', resp.data)
-    #     data = json.loads(resp.data)
-    #     query_item = data[0]
-    #     self.assertEqual(query_item['suggestion'], 'iphone Case')
+    def test_query_recommendation_by_suggestion(self):
+        """ Query Recommendations by Suggestion """
+        resp = self.app.get('/recommendations', query_string='suggestion=iphone Case')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('iPhone', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['suggestion'], 'iphone Case')
 
 
 
@@ -137,6 +137,23 @@ class TestRecommendationServer(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_recommendation_count()
         self.assertEqual(new_count, recommendation_count - 1)
+
+    def test_update_to_default(self):
+        resp = self.app.put('/recommendations/2/default', content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        resp = self.app.get('/recommendations/2', content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        recommendation_data = json.loads(resp.data)
+        self.assertEqual(recommendation_data['suggestion'], "Apple Watch")
+
+    def test_update_to_default_not_available(self):
+        """ Update a Recommendation to default that is not available """
+        resp = self.app.put('/recommendations/5/default', content_type='application/json')
+        self.assertNotEqual(resp.status_code, HTTP_200_OK)
+        resp = self.app.put('/recommendations/5/default', content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+        resp_json = json.loads(resp.get_data())
+        self.assertIn('not found', resp_json['message'])
 
 ######################################################################
 # Utility functions

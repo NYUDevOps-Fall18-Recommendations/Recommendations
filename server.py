@@ -165,6 +165,21 @@ def query_recommendations():
     results = [recommendation.serialize() for recommendation in recommendations]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
+
+######################################################################
+# UPDATE A Recommendation TO DEFAULT
+######################################################################
+@app.route('/recommendations/<int:id>/default', methods=['PUT'])
+def update_to_default(id):
+    """ Update to a default recommendation  """
+    recommendation = Recommendation.find(id)
+    if not recommendation:
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+    if not recommendation.suggestion:
+        abort(HTTP_400_BAD_REQUEST, "recommendation with id '{}' is not available.".format(id))
+    recommendation.suggestion = "Apple Watch"
+    recommendation.save()
+    return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
 ######################################################################
 #   M A I N
 ######################################################################

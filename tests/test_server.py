@@ -49,7 +49,7 @@ class TestRecommendationServer(unittest.TestCase):
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendation', data=data, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
         # Make sure location header is set
     #location = resp.headers.get('Location', None)
     #self.assertTrue(location != None)
@@ -57,10 +57,8 @@ class TestRecommendationServer(unittest.TestCase):
     #new_json = json.loads(resp.data)
     #self.assertEqual(new_json['name'], 'Table')
 
-    def test_get_recommendation_list(self):
-        """ Get a list of Pets """
-        resp = self.app.get('/recommendations')
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    def test_list_all_recommendations(self):
+        resp = self.app.get('/recommendation')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
-

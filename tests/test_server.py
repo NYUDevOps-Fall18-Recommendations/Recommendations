@@ -54,12 +54,12 @@ class TestRecommendationServer(unittest.TestCase):
     def test_update_recommendation(self):
       """ Update an existing recommendation """
       recommendation = Recommendation.find(2)
-      new_recommedation = dict(id=3, name='iPhone', suggestion='iphone pop ups', category='Electronics')
+      new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
       data = json.dumps(new_recommedation)
       resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
       self.assertEqual(resp.status_code, status.HTTP_200_OK)
-          #new_json = json.loads(resp.data)
-          #self.assertEqual(new_json['category'], 'Comics')
+      new_json = json.loads(resp.data)
+      self.assertEqual(new_json['suggestion'], 'iphone pop ups')
 
     def test_query_recommendation_by_category(self):
       """ Query Recommendations by Category """

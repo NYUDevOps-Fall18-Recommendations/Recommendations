@@ -77,7 +77,7 @@ def index():
 ######################################################################
 # LIST ALL RECOMMENDATIONS
 ######################################################################
-@app.route('/recommendation', methods=['GET'])
+@app.route('/recommendations', methods=['GET'])
 def list_recommendations():
     """ Retrieves a list of pets from the database """
     app.logger.info('Listing pets')
@@ -93,7 +93,7 @@ def list_recommendations():
 ######################################################################
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
-@app.route('/recommendation/<int:id>', methods=['GET'])
+@app.route('/recommendations/<int:id>', methods=['GET'])
 def get_recommendation(id):
     """
     Retrieve a single recommendation
@@ -108,7 +108,7 @@ def get_recommendation(id):
 ######################################################################
 # CREATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
+@app.route('/recommendations', methods=['POST'])
 def create_recommendation():
     """
     Creates a recommendations
@@ -128,7 +128,7 @@ def create_recommendation():
 ######################################################################
 # GET RECOMMENDAITON BY CATEGORY
 ######################################################################
-@app.route('/recommendation', methods=['POST'])
+@app.route('/recommendations', methods=['POST'])
 def get_recommendation_by_category(catName):
     recommendation = Recommendation()
     recommendation.deserialize(request.get_json())

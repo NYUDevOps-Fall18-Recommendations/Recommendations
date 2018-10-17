@@ -39,16 +39,16 @@ class TestRecommendationServer(unittest.TestCase):
         Recommendation.remove_all()
 
     def test_get_recommendation(self):
-		resp = self.app.get('/recommendation/2')
-		self.assertEqual(resp.status_code, HTTP_200_OK)
-		data = json.loads(resp.data)
-		self.assertEqual(data['name'], 'iPhone')
+        resp = self.app.get('/recommendations/2')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(data['name'], 'iPhone')
 
     def test_create_recommendation(self):
         """ Create a new recommendation """
         new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
         data = json.dumps(new_recommenation)
-        resp = self.app.post('/recommendation', data=data, content_type='application/json')
+        resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         # Make sure location header is set
     #location = resp.headers.get('Location', None)
@@ -58,7 +58,17 @@ class TestRecommendationServer(unittest.TestCase):
     #self.assertEqual(new_json['name'], 'Table')
 
     def test_list_all_recommendations(self):
-        resp = self.app.get('/recommendation')
+        resp = self.app.get('/recommendations')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
+
+    def test_query_recommendation_list_by_category(self):
+        resp = self.app.get('/recommendations', query_string='category=Comics')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(resp.data) > 0)
+        self.assertTrue('Infinity Gauntlet' in resp.data)
+        self.assertFalse('iPhone' in resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['category'], 'Comics')

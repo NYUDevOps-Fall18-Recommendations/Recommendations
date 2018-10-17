@@ -33,11 +33,11 @@ class TestRecommendationServer(unittest.TestCase):
         self.app = server.app.test_client()
         Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
         Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
-
+        
     def tearDown(self):
         """Runs towards the end of each test"""
         Recommendation.remove_all()
-
+        
     def test_get_recommendation(self):
         resp = self.app.get('/recommendations/2')
         self.assertEqual(resp.status_code, HTTP_200_OK)
@@ -63,12 +63,23 @@ class TestRecommendationServer(unittest.TestCase):
         data = json.loads(resp.data)
         self.assertEqual(len(data), 2)
 
-    def test_query_recommendation_list_by_category(self):
-        resp = self.app.get('/recommendations', query_string='category=Comics')
+    # def test_query_recommendation_list_by_category(self):
+    #     resp = self.app.get('/recommendations', query_string='category=Comics')
+    #     self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    #     self.assertTrue(len(resp.data) > 0)
+    #     self.assertTrue('Infinity Gauntlet' in resp.data)
+    #     self.assertFalse('iPhone' in resp.data)
+    #     data = json.loads(resp.data)
+    #     query_item = data[0]
+    #     self.assertEqual(query_item['category'], 'Comics')
+    #     self.assertEqual(len(data), 2)      
+   
+    def test_update_recommendation(self):
+        """ Update an existing recommendation """
+        recommendation = Recommendation.find(2)
+        new_recommedation = dict(id=2, name='iPhone', suggestion='iphone pop ups', category='Electronics')
+        data = json.dumps(new_recommedation)
+        resp = self.app.put('/recommendation/{}'.format(2), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertTrue(len(resp.data) > 0)
-        self.assertTrue('Infinity Gauntlet' in resp.data)
-        self.assertFalse('iPhone' in resp.data)
-        data = json.loads(resp.data)
-        query_item = data[0]
-        self.assertEqual(query_item['category'], 'Comics')
+        new_json = json.loads(resp.data)
+        self.assertEqual(new_json['suggestion'], 'iphone pop ups')

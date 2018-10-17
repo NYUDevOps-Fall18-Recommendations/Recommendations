@@ -26,28 +26,39 @@ HTTP_409_CONFLICT = 409
 #  T E S T   C A S E S
 ######################################################################
 class TestRecommendationServer(unittest.TestCase):
-	""" Recommendation Service tests """
+    """ Recommendation Service tests """
 
-	def setUp(self):
-		"""Runs before each test"""
-		self.app = server.app.test_client()
-		Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
-		Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
+    def setUp(self):
+        """Runs before each test"""
+        self.app = server.app.test_client()
+        Recommendation(id=1, name='Infinity Gauntlet', suggestion='Soul Stone', category='Comics').save()
+        Recommendation(id=2, name='iPhone', suggestion='iphone Case', category='Electronics').save()
 
+    def tearDown(self):
+        """Runs towards the end of each test"""
+        Recommendation.remove_all()
 
-	def tearDown(self):
-		"""Runs towards the end of each test"""
-		Recommendation.remove_all()
+    def test_get_recommendation(self):
+		resp = self.app.get('/recommendation/2')
+		self.assertEqual(resp.status_code, HTTP_200_OK)
+		data = json.loads(resp.data)
+		self.assertEqual(data['name'], 'iPhone')
 
-	def test_create_recommendation(self):
-		""" Create a new recommendation """
-		new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
-		data = json.dumps(new_recommenation)
-		resp = self.app.post('/recommendation', data=data, content_type='application/json')
-		self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-		# Make sure location header is set
-        #location = resp.headers.get('Location', None)
-        #self.assertTrue(location != None)
-        # Check the data is correct
-        #new_json = json.loads(resp.data)
-        #self.assertEqual(new_json['name'], 'Table')
+    def test_create_recommendation(self):
+        """ Create a new recommendation """
+        new_recommenation = dict(id=9999, name='Table', suggestion='Chair', category='Home Appliances')
+        data = json.dumps(new_recommenation)
+        resp = self.app.post('/recommendation', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # Make sure location header is set
+    #location = resp.headers.get('Location', None)
+    #self.assertTrue(location != None)
+    # Check the data is correct
+    #new_json = json.loads(resp.data)
+    #self.assertEqual(new_json['name'], 'Table')
+
+    def test_list_all_recommendations(self):
+        resp = self.app.get('/recommendation')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = json.loads(resp.data)
+        self.assertEqual(len(data), 2)

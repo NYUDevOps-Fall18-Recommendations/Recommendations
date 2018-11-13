@@ -19,12 +19,12 @@ class Recommendation(object):
 
     recommendations = []
 
-    def __init__(self, id=0, name=None, suggestion=None, category=None):
+    def __init__(self, id=0, productId=None, suggestionId=None, categoryId=None):
         """ Constructor """
         self.id = int(id)
-        self.name = name
-        self.suggestion = suggestion
-        self.category = category
+        self.productId = productId
+        self.suggestionId = suggestionId
+        self.categoryId = categoryId
 
     def save(self):
         """ 
@@ -32,9 +32,9 @@ class Recommendation(object):
         Uses a list to store recommendations. 
         Will switch to databse for persitant storage. 
         """
-        if self.name is None:   # name is the only required field
-            raise DataValidationError('name attribute is not set')
-        self.recommendations.append(Recommendation(self.id, self.name, self.suggestion, self.category))
+        if self.productId is None:   # productId is the only required field
+            raise DataValidationError('productId attribute is not set')
+        self.recommendations.append(Recommendation(self.id, self.productId, self.suggestionId, self.categoryId))
 
     def delete(self):
         """ Deletes a Recommendation from the database """
@@ -52,15 +52,15 @@ class Recommendation(object):
     def update(self): 
         for recommendation in Recommendation.recommendations: 
             if recommendation.id == self.id: 
-                recommendation.name = self.name
-                recommendation.suggestion = self.suggestion
-                recommendation.category = self.category
+                recommendation.productId = self.productId
+                recommendation.suggestionId = self.suggestionId
+                recommendation.categoryId = self.categoryId
             return
         Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
 
     def serialize(self):
         """ Serializes a Recommendation into a dictionary """
-        return {"id": self.id, "name": self.name, "suggestion": self.suggestion, "category": self.category}
+        return {"id": self.id, "productId": self.productId, "suggestionId": self.suggestionId, "categoryId": self.categoryId}
 
     def deserialize(self, data):
         """
@@ -72,9 +72,9 @@ class Recommendation(object):
             raise DataValidationError('Invalid recommendation: body of request contained bad or no data')
         try:
             self.id = data['id']
-            self.name = data['name']
-            self.suggestion = data['suggestion']
-            self.category = data['category']
+            self.productId = data['productId']
+            self.suggestionId = data['suggestionId']
+            self.categoryId = data['categoryId']
         except KeyError as err:
             raise DataValidationError('Invalid pet: missing ' + err.args[0])
         return
@@ -108,7 +108,7 @@ class Recommendation(object):
     def __find_by(attribute, value):
         """ Generic Query that finds a key with a specific value """
         # return [recommendation for recommendation in recommendation.__data
-        # if recommendation.category == category]
+        # if recommendation.categoryId == categoryId]
         Recommendation.logger.info('Processing %s query for %s', attribute, value)
         if isinstance(value, str):
             search_criteria = value.lower() # make case insensitive
@@ -117,11 +117,11 @@ class Recommendation(object):
         results = []
 
         for recommendation in Recommendation.recommendations: 
-            if attribute == "category": 
-                if recommendation.category == value: 
+            if attribute == "categoryId": 
+                if recommendation.categoryId == value: 
                     results.append(recommendation)
-            elif attribute == "suggestion": 
-                if recommendation.suggestion == value: 
+            elif attribute == "suggestionId": 
+                if recommendation.suggestionId == value: 
                     results.append(recommendation)
             else: 
                 return results
@@ -129,9 +129,9 @@ class Recommendation(object):
         return results
 
     @staticmethod
-    def find_by_category(category): 
-        return Recommendation.__find_by("category", category)
+    def find_by_categoryId(categoryId): 
+        return Recommendation.__find_by("categoryId", categoryId)
 
     @staticmethod
-    def find_by_suggestion(suggestion): 
-        return Recommendation.__find_by("suggestion", suggestion)
+    def find_by_suggestionId(suggestionId): 
+        return Recommendation.__find_by("suggestionId", suggestionId)

@@ -82,9 +82,9 @@ def list_recommendations():
     """ Retrieves a list of pets from the database """
     app.logger.info('Listing pets')
     results = []
-    category = request.args.get('category')
-    if category:
-        results = Recommendation.find_by_category(category)
+    categoryId = request.args.get('categoryId')
+    if categoryId:
+        results = Recommendation.find_by_categoryId(categoryId)
     else:
         results = Recommendation.all()
 

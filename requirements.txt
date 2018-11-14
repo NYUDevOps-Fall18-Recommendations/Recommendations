@@ -24,4 +24,5 @@ coverage==4.2
 codecov==2.0.15
 
 # DB
+cloudant
 # redis>=2.10

@@ -7,6 +7,7 @@ import os
 import json
 import logging
 import pickle
+from requests import HTTPError, ConnectionError
 from cloudant.client import Cloudant
 from cloudant.query import Query
 

@@ -11,7 +11,8 @@ app = Flask(__name__)
 app.config['LOGGING_LEVEL'] = logging.INFO
 
 # Pull options from environment
-DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+#DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+DEBUG = 'True'
 PORT = os.getenv('PORT', '5000')
 
 # Status Codes
@@ -146,8 +147,44 @@ def update_recommendation(id):
         raise NotFound("recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
-    recommendation.save()
+    recommendation.update()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
+
+##########################################################################################
+# ACTION
+# UPDATE A PARTICUALR CATERGORY ID FROM OLD TO NEW FOR ALL RELEVANT RECOMMENDATIONS
+###########################################################################################
+@app.route('/recommendations/updateCategory/<int:id>', methods=['PUT'])
+def update_recommendationCategory(id):
+    """
+    Update a recommendation category
+    This end point will update a recommendation category for all RELEVANT RECOMMENDATIONS
+    based on the data in the body
+    """
+    results = Recommendation.find_by_categoryId(id)
+    app.logger.info('length of results is [{}]'.format(len(results)))
+    app.logger.info('id of results is [{}]'.format(results[0].id))
+    app.logger.info('productId of results is [{}]'.format(results[0].productId))
+    if(len(results) == 0):
+       raise NotFound("recommendation with category id '{}' was not found.".format(id))
+
+    i = 0
+    sizeOfResults = len(results)
+    while i < sizeOfResults:
+        recommendation = Recommendation.find(results[i].id)
+        app.logger.info('success 1')
+        app.logger.info(recommendation.id)
+        app.logger.info(recommendation.categoryId)
+        app.logger.info(id)
+        recommendation.categoryId = id
+        recommendation.save()
+        i += 1
+    # message = len(results)
+    message = {'success' : 'RECOMMENDATIONS updated'}
+    return make_response('success', status.HTTP_200_OK)
+
+
 
 ######################################################################
 #   M A I N

@@ -189,11 +189,11 @@ class Recommendation(object):
         else:
             Recommendation.logger.info('VCAP_SERVICES and BINDING_CLOUDANT undefined.')
             creds = {
-                "username": "admin",
-                "password": "pass",
+                "username": None,
+                "password": None,
                 "host": '127.0.0.1',
                 "port": 5984,
-                "url": "http://127.0.0.1:5984/"
+                "url": "http://admin:pass@127.0.0.1:5984/"
             }
             # creds = {
             #     "username": "admin",
@@ -214,22 +214,14 @@ class Recommendation(object):
                 opts['port'] = cloudant_service['credentials']['port']
                 opts['url'] = cloudant_service['credentials']['url']
 
-        # if any(k not in opts for k in ('host', 'port', 'url')):
-        #     Recommendation.logger.info('Error - Failed to retrieve options. ' \
-        #                      'Check that app is bound to a Cloudant service.')
-        #     exit(-1)
-        if any(k not in opts for k in ('host', 'username', 'password', 'port', 'url')):
-            Recommendation.logger.info('Error - Failed to retrieve options. ' \
-                             'Check that app is bound to a Cloudant service.')
-            exit(-1)
+        for service in vcap_services:
+            if any(k not in opts for k in ('host', 'username', 'password', 'port', 'url')):
+                Recommendation.logger.info('Error - Failed to retrieve options. ' \
+                                 'Check that app is bound to a Cloudant service.')
+                exit(-1)
 
         Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
         try:
-            # Recommendation.client = Cloudant(
-            #                       url=opts['url'],
-            #                       connect=True,
-            #                       auto_renew=True
-            #                      )
             Recommendation.client = Cloudant(opts['username'],
                                   opts['password'],
                                   url=opts['url'],

@@ -1,6 +1,6 @@
 # Recommendations
 
-# Travis CI
+## Travis CI
 [![Build Status](https://travis-ci.org/NYUDevOps-Fall18-Recommendations/recommendations.svg?branch=master)](https://travis-ci.org/NYUDevOps-Fall18-Recommendations/recommendations)
 
 This is the working repository for NYU DevOps Fall 18 "Recommendations" team.

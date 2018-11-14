@@ -146,7 +146,7 @@ def update_recommendation(id):
         raise NotFound("recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
-    recommendation.save()
+    recommendation.update()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################

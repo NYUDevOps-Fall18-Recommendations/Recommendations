@@ -21,8 +21,6 @@ class Recommendation(object):
     client = None
     database = None
 
-    recommendations = []
-
     def __init__(self, productId=None, suggestionId=None, categoryId=None):
         """ Constructor """
         self.id = None

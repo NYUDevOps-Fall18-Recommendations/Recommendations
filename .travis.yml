@@ -4,6 +4,8 @@ python:
 # command to install dependencies
 install: "pip install -r requirements.txt"
 # command to run tests
+before_script: docker run -d --name couchdb -p 5984:5984 -v /opt/couchdb/data:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass
 script: python -m pytest tests/
 services:
-  - couchdb
+  # - couchdb
+  - docker 

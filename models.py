@@ -188,20 +188,20 @@ class Recommendation(object):
             vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
         else:
             Recommendation.logger.info('VCAP_SERVICES and BINDING_CLOUDANT undefined.')
+            # creds = {
+            #     "username": None,
+            #     "password": None,
+            #     "host": '127.0.0.1',
+            #     "port": 5984,
+            #     "url": "http://127.0.0.1:5984/"
+            # }
             creds = {
-                "username": None,
-                "password": None,
+                "username": "admin",
+                "password": "pass",
                 "host": '127.0.0.1',
                 "port": 5984,
                 "url": "http://admin:pass@127.0.0.1:5984/"
             }
-            # creds = {
-            #     "username": "admin",
-            #     "password": "pass",
-            #     "host": '127.0.0.1',
-            #     "port": 5984,
-            #     "url": "http://admin:pass@127.0.0.1:5984/"
-            # }
             vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
 
         # Look for Cloudant in VCAP_SERVICES

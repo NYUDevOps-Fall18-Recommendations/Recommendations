@@ -9,6 +9,8 @@ import logging
 import pickle
 from cloudant.client import Cloudant
 from cloudant.query import Query
+from requests import HTTPError, ConnectionError
+
 
 class DataValidationError(Exception):
     """ Custom Exception with data validation fails """

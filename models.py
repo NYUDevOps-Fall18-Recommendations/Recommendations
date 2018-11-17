@@ -217,12 +217,22 @@ class Recommendation(object):
 
         Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
         try:
-            Recommendation.client = Cloudant(opts['username'],
-                                  opts['password'],
-                                  url=opts['url'],
-                                  connect=True,
-                                  auto_renew=True
-                                 )
+            if 'TRAVIS_CI' in os.environ:
+                Recommendation.logger.info('Running in TravisCI... using admin parity')
+                Recommendation.client = Cloudant(opts['username'],
+                                      opts['password'],
+                                      url=opts['url'],
+                                      connect=True,
+                                      auto_renew=True,
+                                      admin_party=True
+                                     )
+            else: 
+                Recommendation.client = Cloudant(opts['username'],
+                                      opts['password'],
+                                      url=opts['url'],
+                                      connect=True,
+                                      auto_renew=True
+                                     )
         except ConnectionError:
             raise AssertionError('Cloudant service could not be reached')
 

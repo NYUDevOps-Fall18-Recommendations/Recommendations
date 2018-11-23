@@ -118,6 +118,7 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.save()
     message = recommendation.serialize()
+    response.headers['Location'] = url_for('get_recommendations', id=recommendation.id, _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 ######################################################################
@@ -135,35 +136,50 @@ def delete_recommendations(recommendation_id):
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-@app.route('/recommendations/<int:id>', methods=['PUT'])
-def update_recommendation(id):
+    @app.route('/recommendations/<int:id>', methods=['PUT'])
+    def update_recommendation(id):
     """
     Update a recommendation
     This end point will update a recommendation based on the data in the body
     """
-    recommendation = Recommendation.find(id)
-    if not recommendation:
-        raise NotFound("recommendation with id '{}' was not found.".format(id))
-    recommendation.deserialize(request.get_json())
-    recommendation.id = id
-    recommendation.save()
-    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+        recommendation = Recommendation.find(id)
+        if not recommendation:
+            raise NotFound("recommendation with id '{}' was not found.".format(id))
+        recommendation.deserialize(request.get_json())
+        recommendation.id = id
+        recommendation.save()
+        return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
+######################################################################
+# UPDATE A Recommendation TO DEFAULT
+######################################################################
+    @app.route('/recommendations/<int:id>/default', methods=['PUT'])
+    def update_to_default(id):
+       """ Update to a default recommendation  """
+       recommendation = Recommendation.find(id)
+       if not recommendation:
+           abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+       if not recommendation.suggestion:
+           abort(HTTP_400_BAD_REQUEST, "recommendation with id '{}' is not available.".format(id))
+       recommendation.suggestion = "Apple Watch"
+       recommendation.save()
+       return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
 
 ######################################################################
 # QUERY RECOMMENDATION
 ######################################################################
-@app.route('/recommendations', methods=['GET'])
-def query_recommendations():
-    """ Returns a list of recommendations by query """
-    recommendations = []
-    category = request.args.get('category')
-    suggestion = request.args.get('suggestion')
-    if category:
-        recommendations = Recommendation.find_by_category(category)
-    elif suggestion:
-        recommendations = Recommendation.find_by_suggestion(suggestion)
-    results = [recommendation.serialize() for recommendation in recommendations]
-    return make_response(jsonify(results), status.HTTP_200_OK)
+    @app.route('/recommendations', methods=['GET'])
+    def query_recommendations():
+        """ Returns a list of recommendations by query """
+        recommendations = []
+        category = request.args.get('category')
+        suggestion = request.args.get('suggestion')
+        if category:
+            recommendations = Recommendation.find_by_category(category)
+        elif suggestion:
+            recommendations = Recommendation.find_by_suggestion(suggestion)
+        results = [recommendation.serialize() for recommendation in recommendations]
+        return make_response(jsonify(results), status.HTTP_200_OK)
 
 ######################################################################
 #   M A I N

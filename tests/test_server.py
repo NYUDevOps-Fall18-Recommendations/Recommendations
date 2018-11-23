@@ -75,6 +75,13 @@ class TestRecommendationServer(unittest.TestCase):
         resp = self.app.post('/recommendations', data=data)
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
+    def test_create_recommendation_no_id(self):
+        """ Create a recommendation with no ID """
+        new_recommendation = {'name': 'Macbook', 'suggestion': 'Macbook Case', 'category':'Electronics'}
+        data = json.dumps(new_recommendation)
+        resp = self.app.post('/recommendations', data=data)
+        self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
+
     def test_call_recommendation_with_an_id(self):
         """ Call create passing an id """
         new_reco = {'name': 'Car', 'category': 'Automobile'}
@@ -126,7 +133,22 @@ class TestRecommendationServer(unittest.TestCase):
     #     query_item = data[0]
     #     self.assertEqual(query_item['suggestion'], 'iphone Case')
 
+    def test_update_to_default(self):
+       resp = self.app.put('/recommendations/2/default', content_type='application/json')
+       self.assertEqual(resp.status_code, HTTP_200_OK)
+       resp = self.app.get('/recommendations/2', content_type='application/json')
+       self.assertEqual(resp.status_code, HTTP_200_OK)
+       recommendation_data = json.loads(resp.data)
+       self.assertEqual(recommendation_data['suggestion'], "Apple Watch")
 
+    def test_update_to_default_not_available(self):
+       """ Update a Recommendation to default that is not available """
+       resp = self.app.put('/recommendations/5/default', content_type='application/json')
+       self.assertNotEqual(resp.status_code, HTTP_200_OK)
+       resp = self.app.put('/recommendations/5/default', content_type='application/json')
+       self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+       resp_json = json.loads(resp.get_data())
+       self.assertIn('not found', resp_json['message'])
 
     def test_delete_recommendation(self):
         # save the current number of pets for later comparrison

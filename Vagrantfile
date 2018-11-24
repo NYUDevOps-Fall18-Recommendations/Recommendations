@@ -60,7 +60,31 @@ Vagrant.configure("2") do |config|
       vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
-  #
+
+  # Copy your .gitconfig file so that your git credentials are correct
+  if File.exists?(File.expand_path("~/.gitconfig"))
+    config.vm.provision "file", source: "~/.gitconfig", destination: "~/.gitconfig"
+  end
+
+  # Copy your ssh keys for github so that your git credentials work
+  if File.exists?(File.expand_path("~/.ssh/id_rsa"))
+    config.vm.provision "file", source: "~/.ssh/id_rsa", destination: "~/.ssh/id_rsa"
+  end
+  if File.exists?(File.expand_path("~/.ssh/id_rsa.pub"))
+    config.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "~/.ssh/id_rsa.pub"
+  end
+
+  # Copy your IBM Clouid API Key if you have one
+  if File.exists?(File.expand_path("~/.bluemix/apiKey.json"))
+    config.vm.provision "file", source: "~/.bluemix/apiKey.json", destination: "~/.bluemix/apiKey.json"
+  end
+
+  # Copy your .vimrc file so that your VI editor looks right
+  if File.exists?(File.expand_path("~/.vimrc"))
+    config.vm.provision "file", source: "~/.vimrc", destination: "~/.vimrc"
+  end
+
+
   # View the documentation for the provider you are using for more
   # information on available options.
 
@@ -71,11 +95,36 @@ Vagrant.configure("2") do |config|
     apt-get update
     apt-get install -y git python-pip python-dev build-essential
     apt-get -y autoremove
-    #pip install --upgrade pip
+    pip install --upgrade pip
     # Install app dependencies
     cd /vagrant
-    pip install -r requirements.txt
+    sudo pip install -r requirements.txt
   #   apt-get update
   #   apt-get install -y apache2
   SHELL
+
+  ######################################################################
+  # Setup a Bluemix and Kubernetes environment
+  ######################################################################
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "\n************************************"
+    echo " Installing IBM Cloud CLI..."
+    echo "************************************\n"
+    # Install IBM Cloud CLI as Vagrant user
+    sudo -H -u vagrant sh -c 'curl -sL http://ibm.biz/idt-installer | bash'
+    sudo -H -u vagrant sh -c 'ibmcloud config --usage-stats-collect false'
+    sudo -H -u vagrant sh -c "echo 'source <(kubectl completion bash)' >> ~/.bashrc"
+    sudo -H -u vagrant sh -c "echo alias ic=/usr/local/bin/ibmcloud >> ~/.bash_aliases"
+    echo "\n"
+    echo "If you have an IBM Cloud API key in ~/.bluemix/apiKey.json"
+    echo "You can login with the following command:"
+    echo "\n"
+    echo "ibmcloud login -a https://api.ng.bluemix.net --apikey @~/.bluemix/apiKey.json"
+    echo "\n"
+    echo "\n************************************"
+    echo " For the Kubernetes Dashboard use:"
+    echo " kubectl proxy --address='0.0.0.0'"
+    echo "************************************\n"
+  SHELL
+  
 end

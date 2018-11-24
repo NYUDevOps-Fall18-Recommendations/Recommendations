@@ -1,4 +1,4 @@
-  ---
+---
 # This manifest deploys a Python Flask application with a Redis database
 applications:
 - name: nyu-recommendation-service-f18 

@@ -2,8 +2,8 @@
 # This manifest deploys a Python Flask application with a Redis database
 applications:
 - name: nyu-recommendation-service-f18-test2
-  memory: 128M
-  instances: 1
+  memory: 256M
+  instances: 2
   timeout: 180
   #random-route: true
   host: nyu-recommendation-service-f18-test2

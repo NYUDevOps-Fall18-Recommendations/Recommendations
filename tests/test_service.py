@@ -60,8 +60,6 @@ class TestRecommendationService(unittest.TestCase):
     def test_get_recommendation(self):
         self.assertEqual(self.get_recommendation_count(), 2)
         recommendation = self.get_recommendation('iPhone')[0]
-        TestRecommendationService.logger.info("---------TESTING LOGGINGING HERE")
-        TestRecommendationService.logger.info(recommendation['_id'])
         resp = self.app.get('/recommendations/{}'.format(recommendation['_id']))
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
@@ -76,7 +74,6 @@ class TestRecommendationService(unittest.TestCase):
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        # Make sure location header is set
 
     def test_create_recommendation_no_content_type(self):
         new_recommedation = {'categoryId': 'Sports'}

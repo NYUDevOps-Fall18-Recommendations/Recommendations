@@ -103,7 +103,6 @@ def list_recommendations():
 def get_recommendation(id):
     """
     Retrieve a single recommendation
-
     This endpoint will return a recommendation based on it's id
     """
     app.logger.info('Finding a Recommendation with id [{}]'.format(id))

@@ -72,7 +72,7 @@ def internal_server_error(error):
 @app.route('/')
 def index():
     """ Send back the home page """
-    return 'Hello World'
+    return 'Hello World, from Recommendation microservice'
 
 ######################################################################
 # LIST ALL RECOMMENDATIONS
@@ -156,7 +156,7 @@ def update_recommendation(id):
         # raise NotFound("recommendation with id '{}' was not found.".format(id))
     recommendation.deserialize(request.get_json())
     recommendation.id = id
-    recommendation.save()
+    recommendation.update()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################

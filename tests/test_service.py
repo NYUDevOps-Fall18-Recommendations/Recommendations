@@ -34,6 +34,7 @@ class TestRecommendationService(unittest.TestCase):
     def setUp(self):
         """Runs before each test"""
         self.app = service.app.test_client()
+<<<<<<< HEAD:tests/test_service.py
         Recommendation.init_db("tests")
         # sleep(0.5)
         Recommendation.remove_all()
@@ -42,6 +43,10 @@ class TestRecommendationService(unittest.TestCase):
         # sleep(0.5)
         Recommendation(productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
         # sleep(0.5)
+=======
+        Recommendation(id=1, productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
+        Recommendation(id=2, productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
+>>>>>>> master:tests/test_service.py
 
 
     def tearDown(self):

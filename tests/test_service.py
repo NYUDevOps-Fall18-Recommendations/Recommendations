@@ -12,7 +12,7 @@ from time import sleep # use for rate limiting Cloudant Lite :(
 from mock import MagicMock, patch
 from flask_api import status    # HTTP Status Codes
 from models import Recommendation, DataValidationError
-import server
+import service
 
 # Status Codes
 HTTP_200_OK = 200
@@ -26,14 +26,14 @@ HTTP_409_CONFLICT = 409
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestRecommendationServer(unittest.TestCase):
+class TestRecommendationService(unittest.TestCase):
     """ Recommendation Service tests """
 
     logger = logging.getLogger(__name__)
 
     def setUp(self):
         """Runs before each test"""
-        self.app = server.app.test_client()
+        self.app = service.app.test_client()
         Recommendation.init_db("tests")
         # sleep(0.5)
         Recommendation.remove_all()
@@ -61,8 +61,8 @@ class TestRecommendationServer(unittest.TestCase):
     def test_get_recommendation(self):
         self.assertEqual(self.get_recommendation_count(), 2)
         recommendation = self.get_recommendation('iPhone')[0]
-        TestRecommendationServer.logger.info("---------TESTING LOGGINGING HERE")
-        TestRecommendationServer.logger.info(recommendation['_id'])
+        TestRecommendationService.logger.info("---------TESTING LOGGINGING HERE")
+        TestRecommendationService.logger.info(recommendation['_id'])
         resp = self.app.get('/recommendations/{}'.format(recommendation['_id']))
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)

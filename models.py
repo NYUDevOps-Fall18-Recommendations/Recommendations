@@ -11,6 +11,11 @@ from cloudant.client import Cloudant
 from cloudant.query import Query
 from requests import HTTPError, ConnectionError
 
+# get configruation from enviuronment (12-factor)
+ADMIN_PARTY = os.environ.get('ADMIN_PARTY', 'False').lower() == 'true'
+CLOUDANT_HOST = os.environ.get('CLOUDANT_HOST', '127.0.0.1')
+CLOUDANT_USERNAME = os.environ.get('CLOUDANT_USERNAME', 'admin')
+CLOUDANT_PASSWORD = os.environ.get('CLOUDANT_PASSWORD', 'pass')
 
 class DataValidationError(Exception):
     """ Custom Exception with data validation fails """
@@ -192,11 +197,11 @@ class Recommendation(object):
         else:
             Recommendation.logger.info('VCAP_SERVICES and BINDING_CLOUDANT undefined.')
             creds = {
-                "username": "admin",
-                "password": "pass",
-                "host": '127.0.0.1',
+                "username": CLOUDANT_USERNAME,
+                "password": CLOUDANT_PASSWORD,
+                "host": CLOUDANT_HOST,
                 "port": 5984,
-                "url": "http://admin:pass@127.0.0.1:5984/"
+                "url": "http://"+CLOUDANT_HOST+":5984/"
             }
             vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
 
@@ -217,22 +222,15 @@ class Recommendation(object):
 
         Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
         try:
-            if 'TRAVIS_CI' in os.environ:
-                Recommendation.logger.info('Running in TravisCI... using admin parity')
-                Recommendation.client = Cloudant(opts['username'],
-                                      opts['password'],
-                                      url=opts['url'],
-                                      connect=True,
-                                      auto_renew=True,
-                                      admin_party=True
-                                     )
-            else: 
-                Recommendation.client = Cloudant(opts['username'],
-                                      opts['password'],
-                                      url=opts['url'],
-                                      connect=True,
-                                      auto_renew=True
-                                     )
+            if ADMIN_PARTY:
+                Recommendation.logger.info('Running in Admin Party Mode...')
+            Recommendation.client = Cloudant(opts['username'],
+                                  opts['password'],
+                                  url=opts['url'],
+                                  connect=True,
+                                  auto_renew=True,
+                                  admin_party=ADMIN_PARTY
+                                 )
         except ConnectionError:
             raise AssertionError('Cloudant service could not be reached')
 

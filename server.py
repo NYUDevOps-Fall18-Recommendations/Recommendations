@@ -157,7 +157,7 @@ def update_recommendation(id):
 # ACTION
 # UPDATE A PARTICUALR CATERGORY ID FROM OLD TO NEW FOR ALL RELEVANT RECOMMENDATIONS
 ###########################################################################################
-@app.route('/recommendations/updateCategory/<string:categoryId>', methods=['PUT'])
+@app.route('/recommendations/category/<string:categoryId>', methods=['PUT'])
 def update_recommendationCategory(categoryId):
     """
     Update a recommendation category

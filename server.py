@@ -11,8 +11,7 @@ app = Flask(__name__)
 app.config['LOGGING_LEVEL'] = logging.INFO
 
 # Pull options from environment
-#DEBUG = (os.getenv('DEBUG', 'False') == 'True')
-DEBUG = 'True'
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 PORT = os.getenv('PORT', '5000')
 
 # Status Codes
@@ -170,7 +169,7 @@ def update_recommendationCategory(categoryId):
            message = {'error' : 'Recommendation with categoryId: %s was not found' % str(categoryId)}
            return_code = HTTP_404_NOT_FOUND
            return jsonify(message), return_code
-           
+
     data = request.get_json()
     i = 0
     sizeOfResults = len(results)

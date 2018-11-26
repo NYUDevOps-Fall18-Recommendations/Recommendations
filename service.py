@@ -72,7 +72,7 @@ def internal_server_error(error):
 @app.route('/')
 def index():
     """ Send back the home page """
-    return 'Hello World'
+    return 'Hello World, from Recommendation microservice'
 
 ######################################################################
 # LIST ALL RECOMMENDATIONS

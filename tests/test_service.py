@@ -11,7 +11,7 @@ import os
 from mock import MagicMock, patch
 from flask_api import status    # HTTP Status Codes
 from models import Recommendation, DataValidationError
-import server
+import service
 
 # Status Codes
 HTTP_200_OK = 200
@@ -25,12 +25,12 @@ HTTP_409_CONFLICT = 409
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestRecommendationServer(unittest.TestCase):
+class TestRecommendationService(unittest.TestCase):
     """ Recommendation Service tests """
 
     def setUp(self):
         """Runs before each test"""
-        self.app = server.app.test_client()
+        self.app = service.app.test_client()
         Recommendation(id=1, productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
         Recommendation(id=2, productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
 

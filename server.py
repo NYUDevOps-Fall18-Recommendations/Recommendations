@@ -144,7 +144,10 @@ def update_recommendation(id):
     """
     recommendation = Recommendation.find(id)
     if not recommendation:
-        raise NotFound("recommendation with id '{}' was not found.".format(id))
+        message = {'error' : 'Recommendation with id: %s was not found' % str(id)}
+        return_code = HTTP_404_NOT_FOUND
+        return jsonify(message), return_code
+
     recommendation.deserialize(request.get_json())
     recommendation.id = id
     recommendation.update()
@@ -155,32 +158,27 @@ def update_recommendation(id):
 # ACTION
 # UPDATE A PARTICUALR CATERGORY ID FROM OLD TO NEW FOR ALL RELEVANT RECOMMENDATIONS
 ###########################################################################################
-@app.route('/recommendations/updateCategory/<int:id>', methods=['PUT'])
-def update_recommendationCategory(id):
+@app.route('/recommendations/updateCategory/<string:categoryId>', methods=['PUT'])
+def update_recommendationCategory(categoryId):
     """
     Update a recommendation category
     This end point will update a recommendation category for all RELEVANT RECOMMENDATIONS
     based on the data in the body
     """
-    results = Recommendation.find_by_categoryId(id)
-    app.logger.info('length of results is [{}]'.format(len(results)))
-    app.logger.info('id of results is [{}]'.format(results[0].id))
-    app.logger.info('productId of results is [{}]'.format(results[0].productId))
+    results = Recommendation.find_by_categoryId(categoryId)
     if(len(results) == 0):
-       raise NotFound("recommendation with category id '{}' was not found.".format(id))
-
+           message = {'error' : 'Recommendation with categoryId: %s was not found' % str(categoryId)}
+           return_code = HTTP_404_NOT_FOUND
+           return jsonify(message), return_code
+           
+    data = request.get_json()
     i = 0
     sizeOfResults = len(results)
     while i < sizeOfResults:
         recommendation = Recommendation.find(results[i].id)
-        app.logger.info('success 1')
-        app.logger.info(recommendation.id)
-        app.logger.info(recommendation.categoryId)
-        app.logger.info(id)
-        recommendation.categoryId = id
-        recommendation.save()
+        recommendation.categoryId = data['categoryId']
+        recommendation.update()
         i += 1
-    # message = len(results)
     message = {'success' : 'RECOMMENDATIONS updated'}
     return make_response('success', status.HTTP_200_OK)
 

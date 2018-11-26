@@ -115,6 +115,17 @@ class TestRecommendationServer(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['categoryId'], 'Comics')
 
+    def test_update_recommendationCategory(self):
+        new_category = { 'categoryId': 'vehilceInsurance'}
+        data = json.dumps(new_category)
+        resp = self.app.put('/recommendations/updateCategory/Electronics', data=data, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+    def test_update_recommendationCategory_not_found(self):
+        dataToUpdate = dict(categoryId='vehicleInsurance')
+        resp = self.app.put('/recommendations/updateCategory/Mechanics', data=dataToUpdate, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
 
 
 

@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import unittest
+from time import sleep # use for rate limiting Cloudant Lite :(
 from models import Recommendation, DataValidationError
 
 ######################################################################

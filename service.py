@@ -124,6 +124,7 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.save()
     message = recommendation.serialize()
+    response.headers['Location'] = url_for('get_recommendations', id=recommendation.id, _external=True)
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 ######################################################################

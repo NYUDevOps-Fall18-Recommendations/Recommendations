@@ -9,7 +9,6 @@ import logging
 import json
 import os
 from time import sleep # use for rate limiting Cloudant Lite :(
-from mock import MagicMock, patch
 from flask_api import status    # HTTP Status Codes
 from models import Recommendation, DataValidationError
 import service

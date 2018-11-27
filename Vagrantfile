@@ -1,28 +1,3 @@
-Skip to content
- 
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- @ameryisafreeelf Sign out
-0
-0 0 NYUDevOps-Fall18-Recommendations/recommendations
- Code
- Issues 21
- Pull requests 3
- ZenHub
- Projects 0
- Wiki
- Insights
- Settings
-recommendations/Vagrantfile
-bf9fd1c  23 hours ago
-@yc2945 yc2945 merge conflict
-@yc2945 @rajBandhakavi
-     
-145 lines (124 sloc)  6.04 KB
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
@@ -167,16 +142,3 @@ Vagrant.configure("2") do |config|
   SHELL
   
 end
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Press h to open a hovercard with more details.

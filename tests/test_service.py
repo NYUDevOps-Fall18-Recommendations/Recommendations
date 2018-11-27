@@ -8,6 +8,7 @@ import unittest
 import logging
 import json
 import os
+from time import sleep # use for rate limiting Cloudant Lite :(
 from mock import MagicMock, patch
 from flask_api import status    # HTTP Status Codes
 from models import Recommendation, DataValidationError
@@ -28,12 +29,19 @@ HTTP_409_CONFLICT = 409
 class TestRecommendationService(unittest.TestCase):
     """ Recommendation Service tests """
 
+    logger = logging.getLogger(__name__)
+
     def setUp(self):
         """Runs before each test"""
         self.app = service.app.test_client()
-        Recommendation(id=1, productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
-        Recommendation(id=2, productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
-
+        Recommendation.init_db("tests")
+        # sleep(0.5)
+        Recommendation.remove_all()
+        # sleep(0.5)
+        Recommendation(productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
+        # sleep(0.5)
+        Recommendation(productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
+        # sleep(0.5)
 
     def tearDown(self):
         """Runs towards the end of each test"""
@@ -45,38 +53,35 @@ class TestRecommendationService(unittest.TestCase):
         Recommendation.remove_all()
 
     def test_index(self):
-        """ Test the index page """
         resp = self.app.get('/')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         self.assertIn('', resp.data)
 
     def test_get_recommendation(self):
-        resp = self.app.get('/recommendations/2')
+        self.assertEqual(self.get_recommendation_count(), 2)
+        recommendation = self.get_recommendation('iPhone')[0]
+        resp = self.app.get('/recommendations/{}'.format(recommendation['_id']))
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
-        self.assertEqual(data['productId'], 'iPhone')
+        self.assertEqual(data['suggestionId'], 'iphone Case')
 
     def test_get_nonexisting_recommendation(self):
-        """ Get a nonexisting recommendation """
-        resp = self.app.get('/recommendations/5')
+        resp = self.app.get('/recommendations/{}'.format("abc"))
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
     def test_create_recommendation(self):
-        new_recommenation = dict(id=9999, productId='Table', suggestionId='Chair', categoryId='Home Appliances')
+        new_recommenation = dict(productId='Table', suggestionId='Chair', categoryId='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        # Make sure location header is set
 
     def test_create_recommendation_no_content_type(self):
-        """ Create a recommendation with no Content-Type """
         new_recommedation = {'categoryId': 'Sports'}
         data = json.dumps(new_recommedation)
         resp = self.app.post('/recommendations', data=data)
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
     def test_call_recommendation_with_an_id(self):
-        """ Call create passing an id """
         new_reco = {'productId': 'Car', 'categoryId': 'Automobile'}
         data = json.dumps(new_reco)
         resp = self.app.post('/recommendations/7', data=data)
@@ -89,41 +94,49 @@ class TestRecommendationService(unittest.TestCase):
         self.assertEqual(len(data), 2)
 
     def test_update_recommendation(self):
-        recommendation = Recommendation.find(2)
-        new_recommedation = dict(id=2, productId='iPhone', suggestionId='iphone pop ups', categoryId='Electronics')
+        recommendation = self.get_recommendation('iPhone')[0]
+        new_recommedation = dict(productId='iPhone', suggestionId='iphone pop ups', categoryId='Electronics')
         data = json.dumps(new_recommedation)
-        resp = self.app.put('/recommendations/{}'.format(2), data=data, content_type='application/json')
+        resp = self.app.put('/recommendations/{}'.format(recommendation['_id']), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestionId'], 'iphone pop ups')
 
     def test_update_recommendation_not_found(self):
-        """ Update a Recommendation that doesn't exist """
-        new_reco = dict(id=3, productId='samsung', suggestionId='samsung pop ups', categoryId='Electronocs')
+        new_reco = dict(productId='samsung', suggestionId='samsung pop ups', categoryId='Electronocs')
         data = json.dumps(new_reco)
-        resp = self.app.put('/new_reco/3', data=data, content_type='application/json')
+        invalidId = "123"
+        recommendation = self.get_recommendation('iPhone')[0]
+        resp = self.app.put('/recommendations/{}'.format(invalidId), data=data, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
-    def test_query_recommendation_by_categoryId(self):
-        """ Query Recommendations by category """
-        resp = self.app.get('/recommendations', query_string='categoryId=Comics')
+    def test_query_recommendation_by_productId(self):
+        resp = self.app.get('/recommendations', query_string='productId=iPhone')
+        data = json.loads(resp.data)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertGreater(len(resp.data), 0)
-        self.assertIn('Infinity Gauntlet', resp.data)
-        self.assertNotIn('iPhone', resp.data)
+        self.assertEqual(len(data), 1)
+        self.assertIn('iphone Case', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
         data = json.loads(resp.data)
         query_item = data[0]
-        self.assertEqual(query_item['categoryId'], 'Comics')
+        self.assertEqual(query_item['categoryId'], 'Electronics')
 
-
-
-
+    def test_query_recommendation_by_categoryId(self):
+        resp = self.app.get('/recommendations', query_string='categoryId=Electronics')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn('iphone Case', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['categoryId'], 'Electronics')
 
     def test_delete_recommendation(self):
         # save the current number of pets for later comparrison
         recommendation_count = self.get_recommendation_count()
         # delete a pet
-        resp = self.app.delete('/recommendations/2', content_type='application/json')
+        recommendation = self.get_recommendation('iPhone')[0]
+        resp = self.app.delete('/recommendations/{}'.format(recommendation['_id']), content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_recommendation_count()
@@ -132,6 +145,15 @@ class TestRecommendationService(unittest.TestCase):
 ######################################################################
 # Utility functions
 ######################################################################
+    def get_recommendation(self, productId):
+        """ retrieves a pet for use in other actions """
+        resp = self.app.get('/recommendations',
+                            query_string='productId={}'.format(productId))
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertGreater(len(resp.data), 0)
+        self.assertIn(productId, resp.data)
+        data = json.loads(resp.data)
+        return data
 
     def get_recommendation_count(self):
         """ save the current number of recommendations """

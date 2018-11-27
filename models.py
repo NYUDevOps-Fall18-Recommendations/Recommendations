@@ -7,6 +7,15 @@ import os
 import json
 import logging
 import pickle
+from cloudant.client import Cloudant
+from cloudant.query import Query
+from requests import HTTPError, ConnectionError
+
+# get configruation from enviuronment (12-factor)
+ADMIN_PARTY = os.environ.get('ADMIN_PARTY', 'False').lower() == 'true'
+CLOUDANT_HOST = os.environ.get('CLOUDANT_HOST', '127.0.0.1')
+CLOUDANT_USERNAME = os.environ.get('CLOUDANT_USERNAME', 'admin')
+CLOUDANT_PASSWORD = os.environ.get('CLOUDANT_PASSWORD', 'pass')
 
 class DataValidationError(Exception):
     """ Custom Exception with data validation fails """
@@ -14,53 +23,69 @@ class DataValidationError(Exception):
 
 class Recommendation(object):
     """ Recommendation interface to database """
-
     logger = logging.getLogger(__name__)
+    client = None
+    database = None
 
     recommendations = []
 
-    def __init__(self, id=0, productId=None, suggestionId=None, categoryId=None):
+    def __init__(self, productId=None, suggestionId=None, categoryId=None):
         """ Constructor """
-        self.id = int(id)
+        self.id = None
         self.productId = productId
         self.suggestionId = suggestionId
         self.categoryId = categoryId
 
     def save(self):
-        """ 
-        Saves a Recommendation
-        Uses a list to store recommendations. 
-        Will switch to databse for persitant storage. 
-        """
         if self.productId is None:   # productId is the only required field
             raise DataValidationError('productId attribute is not set')
-        self.recommendations.append(Recommendation(self.id, self.productId, self.suggestionId, self.categoryId))
+        if self.id:
+            self.update()
+        else:
+            self.create()
+
+    def create(self):
+        if self.productId is None:   # productId is the only required field
+            raise DataValidationError('name attribute is not set')
+
+        try:
+            document = self.database.create_document(self.serialize())
+        except HTTPError as err:
+            Recommendation.logger.warning('Create failed: %s', err)
+            return
+
+        if document.exists():
+            self.id = document['_id']
 
     def delete(self):
-        """ Deletes a Recommendation from the database """
-        target_index = -1
-        for i in range(len(self.recommendations)): 
-            if (self.recommendations[i].id == self.id): 
-                target_index = i
-                break
-
-        if target_index == -1: 
+        try:
+            document = self.database[self.id]
+        except KeyError:
+            document = None
             Recommendation.logger.info('Unable to delete Recommendation with id %s', self.id)
-        else: 
-            del self.recommendations[target_index]
+        if document:
+            document.delete()
 
     def update(self): 
-        for recommendation in Recommendation.recommendations: 
-            if recommendation.id == self.id: 
-                recommendation.productId = self.productId
-                recommendation.suggestionId = self.suggestionId
-                recommendation.categoryId = self.categoryId
-            return
-        Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
+        try:
+            document = self.database[self.id]
+        except KeyError:
+            document = None
+            Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
+        if document:
+            document.update(self.serialize())
+            document.save()
 
     def serialize(self):
         """ Serializes a Recommendation into a dictionary """
-        return {"id": self.id, "productId": self.productId, "suggestionId": self.suggestionId, "categoryId": self.categoryId}
+        recommendation = {
+            "productId": self.productId, 
+            "suggestionId": self.suggestionId, 
+            "categoryId": self.categoryId
+        }
+        if self.id:
+            recommendation['_id'] = self.id
+        return recommendation
 
     def deserialize(self, data):
         """
@@ -68,70 +93,153 @@ class Recommendation(object):
         Args:
             data (dict): A dictionary containing the Recommendation data
         """
-        if not isinstance(data, dict):
-            raise DataValidationError('Invalid recommendation: body of request contained bad or no data')
+        Recommendation.logger.info(data)
         try:
-            self.id = data['id']
             self.productId = data['productId']
             self.suggestionId = data['suggestionId']
             self.categoryId = data['categoryId']
-        except KeyError as err:
-            raise DataValidationError('Invalid pet: missing ' + err.args[0])
-        return
+        except KeyError as error:
+            raise DataValidationError('Invalid recommendation: missing ' + error.args[0])
+        except TypeError as error:
+            raise DataValidationError('Invalid recommendation: body of request contained bad or no data')
+        # if there is no id and the data has one, assign it
+        if not self.id and '_id' in data:
+            self.id = data['_id']
 
+        return self
 
 ######################################################################
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
 
-    @staticmethod
-    def remove_all():
-        """ Removes all Recommendations """
-        Recommendation.recommendations = list()
+    @classmethod
+    def connect(cls):
+        """ Connect to the server """
+        cls.client.connect()
+
+    @classmethod
+    def disconnect(cls):
+        """ Disconnect from the server """
+        cls.client.disconnect()
+
+    @classmethod
+    def remove_all(cls):
+        for document in cls.database:
+            document.delete()
 
 
-    @staticmethod
-    def all():
+    @classmethod
+    def all(cls):
         """ Query that returns all recommendations """
-        return Recommendation.recommendations
-
-
-    @staticmethod
-    def find(targetId): 
-        for recommendation in Recommendation.recommendations: 
-            if (recommendation.id == targetId): 
-                return recommendation
-        return None
-
-
-    @staticmethod
-    def __find_by(attribute, value):
-        """ Generic Query that finds a key with a specific value """
-        # return [recommendation for recommendation in recommendation.__data
-        # if recommendation.categoryId == categoryId]
-        Recommendation.logger.info('Processing %s query for %s', attribute, value)
-        if isinstance(value, str):
-            search_criteria = value.lower() # make case insensitive
-        else:
-            search_criteria = value
         results = []
-
-        for recommendation in Recommendation.recommendations: 
-            if attribute == "categoryId": 
-                if recommendation.categoryId == value: 
-                    results.append(recommendation)
-            elif attribute == "suggestionId": 
-                if recommendation.suggestionId == value: 
-                    results.append(recommendation)
-            else: 
-                return results
-
+        for doc in cls.database:
+            recommendation = Recommendation().deserialize(doc)
+            recommendation.id = doc['_id']
+            results.append(recommendation)
         return results
 
-    @staticmethod
-    def find_by_categoryId(categoryId): 
-        return Recommendation.__find_by("categoryId", categoryId)
 
+    @classmethod
+    def find(cls, targetId): 
+        """ Query that finds Recommendation by their id """
+        try:
+            document = cls.database[targetId]
+            return Recommendation().deserialize(document)
+        except KeyError:
+            return None
+
+    @classmethod
+    def find_by(cls, **kwargs):
+        """ Find records using selector """
+        query = Query(cls.database, selector=kwargs)
+        results = []
+        for doc in query.result:
+            recommendation = Recommendation()
+            recommendation.deserialize(doc)
+            results.append(recommendation)
+        return results
+
+    @classmethod
+    def find_by_productId(cls, productId):
+        """ Query that finds Recommendations by their productId """
+        return cls.find_by(productId=productId)
+
+    @classmethod
+    def find_by_categoryId(cls, categoryId):
+        """ Query that finds Recommendations by their categoryId """
+        return cls.find_by(categoryId=categoryId)
+
+    @classmethod
+    def find_by_suggestionId(cls, suggestionId):
+        """ Query that finds Recommendations by their suggestionId """
+        return cls.find_by(suggestionId=suggestionId)
+
+
+############################################################
+#  C L O U D A N T   D A T A B A S E   C O N N E C T I O N
+############################################################
     @staticmethod
-    def find_by_suggestionId(suggestionId): 
-        return Recommendation.__find_by("suggestionId", suggestionId)
+    def init_db(dbname='recommendations'):
+        """
+        Initialized Coundant database connection
+        """
+        opts = {}
+        vcap_services = {}
+        # Try and get VCAP from the environment or a file if developing
+        if 'VCAP_SERVICES' in os.environ:
+            Recommendation.logger.info('Running in Bluemix mode.')
+            vcap_services = json.loads(os.environ['VCAP_SERVICES'])
+        # if VCAP_SERVICES isn't found, maybe we are running on Kubernetes?
+        elif 'BINDING_CLOUDANT' in os.environ:
+            Recommendation.logger.info('Found Kubernetes Bindings')
+            creds = json.loads(os.environ['BINDING_CLOUDANT'])
+            vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
+        else:
+            Recommendation.logger.info('VCAP_SERVICES and BINDING_CLOUDANT undefined.')
+            creds = {
+                "username": CLOUDANT_USERNAME,
+                "password": CLOUDANT_PASSWORD,
+                "host": CLOUDANT_HOST,
+                "port": 5984,
+                "url": "http://"+CLOUDANT_HOST+":5984/"
+            }
+            vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
+
+        # Look for Cloudant in VCAP_SERVICES
+        for service in vcap_services:
+            if service.startswith('cloudantNoSQLDB'):
+                cloudant_service = vcap_services[service][0]
+                opts['username'] = cloudant_service['credentials']['username']
+                opts['password'] = cloudant_service['credentials']['password']
+                opts['host'] = cloudant_service['credentials']['host']
+                opts['port'] = cloudant_service['credentials']['port']
+                opts['url'] = cloudant_service['credentials']['url']
+
+        if any(k not in opts for k in ('host', 'username', 'password', 'port', 'url')):
+            Recommendation.logger.info('Error - Failed to retrieve options. ' \
+                             'Check that app is bound to a Cloudant service.')
+            exit(-1)
+
+        Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
+        try:
+            if ADMIN_PARTY:
+                Recommendation.logger.info('Running in Admin Party Mode...')
+            Recommendation.client = Cloudant(opts['username'],
+                                  opts['password'],
+                                  url=opts['url'],
+                                  connect=True,
+                                  auto_renew=True,
+                                  admin_party=ADMIN_PARTY
+                                 )
+        except ConnectionError:
+            raise AssertionError('Cloudant service could not be reached')
+
+        # Create database if it doesn't exist
+        try:
+            Recommendation.database = Recommendation.client[dbname]
+        except KeyError:
+            # Create a database using an initialized client
+            Recommendation.database = Recommendation.client.create_database(dbname)
+        # check for success
+        if not Recommendation.database.exists():
+            raise AssertionError('Database [{}] could not be obtained'.format(dbname))

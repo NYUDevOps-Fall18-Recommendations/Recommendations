@@ -72,7 +72,7 @@ def internal_server_error(error):
 @app.route('/')
 def index():
     """ Send back the home page """
-    return 'Hello World'
+    return 'Hello World, from Recommendation microservice'
 
 ######################################################################
 # LIST ALL RECOMMENDATIONS
@@ -82,9 +82,15 @@ def list_recommendations():
     """ Retrieves a list of pets from the database """
     app.logger.info('Listing pets')
     results = []
-    category = request.args.get('category')
-    if category:
-        results = Recommendation.find_by_category(category)
+    categoryId = request.args.get('categoryId')
+    productId = request.args.get('productId')
+    suggestionId = request.args.get('suggestionId')
+    if categoryId:
+        results = Recommendation.find_by_categoryId(categoryId)
+    elif productId: 
+        results = Recommendation.find_by_productId(productId)
+    elif suggestionId: 
+        results = Recommendation.find_by_suggestionId(suggestionId)
     else:
         results = Recommendation.all()
 
@@ -93,13 +99,13 @@ def list_recommendations():
 ######################################################################
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
-@app.route('/recommendations/<int:id>', methods=['GET'])
+@app.route('/recommendations/<string:id>', methods=['GET'])
 def get_recommendation(id):
     """
     Retrieve a single recommendation
-
     This endpoint will return a recommendation based on it's id
     """
+    app.logger.info('Finding a Recommendation with id [{}]'.format(id))
     recommendation = Recommendation.find(id)
     if not recommendation:
         abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
@@ -124,62 +130,34 @@ def create_recommendation():
 ######################################################################
 # DELETE A Recommendation
 ######################################################################
-@app.route('/recommendations/<int:recommendation_id>', methods=['DELETE'])
+@app.route('/recommendations/<string:recommendation_id>', methods=['DELETE'])
 def delete_recommendations(recommendation_id):
     """ Removes a Recommendation from the database that matches the id """
     app.logger.info('Deleting a Recommendation with id [{}]'.format(recommendation_id))
     recommendation = Recommendation.find(recommendation_id)
     if recommendation:
         recommendation.delete()
+    else: 
+        app.logger.info('Unable to find Recommendation for deletion with id [{}]'.format(recommendation_id))
     return make_response('', HTTP_204_NO_CONTENT)
 
 ######################################################################
 # UPDATE RECOMMENDATION
 ######################################################################
-    @app.route('/recommendations/<int:id>', methods=['PUT'])
-    def update_recommendation(id):
+@app.route('/recommendations/<string:id>', methods=['PUT'])
+def update_recommendation(id):
     """
     Update a recommendation
     This end point will update a recommendation based on the data in the body
     """
-        recommendation = Recommendation.find(id)
-        if not recommendation:
-            raise NotFound("recommendation with id '{}' was not found.".format(id))
-        recommendation.deserialize(request.get_json())
-        recommendation.id = id
-        recommendation.save()
-        return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
-
-######################################################################
-# UPDATE A Recommendation TO DEFAULT
-######################################################################
-    @app.route('/recommendations/<int:id>/default', methods=['PUT'])
-    def update_to_default(id):
-       """ Update to a default recommendation  """
-       recommendation = Recommendation.find(id)
-       if not recommendation:
-           abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
-       if not recommendation.suggestion:
-           abort(HTTP_400_BAD_REQUEST, "recommendation with id '{}' is not available.".format(id))
-       recommendation.suggestion = "Apple Watch"
-       recommendation.save()
-       return make_response(jsonify(recommendation.serialize()), HTTP_200_OK)
-
-######################################################################
-# QUERY RECOMMENDATION
-######################################################################
-    @app.route('/recommendations', methods=['GET'])
-    def query_recommendations():
-        """ Returns a list of recommendations by query """
-        recommendations = []
-        category = request.args.get('category')
-        suggestion = request.args.get('suggestion')
-        if category:
-            recommendations = Recommendation.find_by_category(category)
-        elif suggestion:
-            recommendations = Recommendation.find_by_suggestion(suggestion)
-        results = [recommendation.serialize() for recommendation in recommendations]
-        return make_response(jsonify(results), status.HTTP_200_OK)
+    recommendation = Recommendation.find(id)
+    if not recommendation:
+        abort(HTTP_404_NOT_FOUND, "recommendation with id '{}' was not found.".format(id))
+        # raise NotFound("recommendation with id '{}' was not found.".format(id))
+    recommendation.deserialize(request.get_json())
+    recommendation.id = id
+    recommendation.update()
+    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 #   M A I N

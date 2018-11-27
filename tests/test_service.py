@@ -34,13 +34,13 @@ class TestRecommendationService(unittest.TestCase):
         """Runs before each test"""
         self.app = service.app.test_client()
         Recommendation.init_db("tests")
-        # sleep(0.5)
+        sleep(0.5)
         Recommendation.remove_all()
-        # sleep(0.5)
+        sleep(0.5)
         Recommendation(productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
-        # sleep(0.5)
+        sleep(0.5)
         Recommendation(productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
-        # sleep(0.5)
+        sleep(0.5)
 
     def tearDown(self):
         """Runs towards the end of each test"""

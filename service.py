@@ -87,9 +87,9 @@ def list_recommendations():
     suggestionId = request.args.get('suggestionId')
     if categoryId:
         results = Recommendation.find_by_categoryId(categoryId)
-    elif productId: 
+    elif productId:
         results = Recommendation.find_by_productId(productId)
-    elif suggestionId: 
+    elif suggestionId:
         results = Recommendation.find_by_suggestionId(suggestionId)
     else:
         results = Recommendation.all()
@@ -136,7 +136,7 @@ def delete_recommendations(recommendation_id):
     recommendation = Recommendation.find(recommendation_id)
     if recommendation:
         recommendation.delete()
-    else: 
+    else:
         app.logger.info('Unable to find Recommendation for deletion with id [{}]'.format(recommendation_id))
     return make_response('', HTTP_204_NO_CONTENT)
 
@@ -157,6 +157,34 @@ def update_recommendation(id):
     recommendation.id = id
     recommendation.update()
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+
+##########################################################################################
+# ACTION
+# UPDATE A PARTICUALR CATERGORY ID FROM OLD TO NEW FOR ALL RELEVANT RECOMMENDATIONS
+###########################################################################################
+@app.route('/recommendations/category/<string:categoryId>', methods=['PUT'])
+def update_recommendationCategory(categoryId):
+    """
+    Update a recommendation category
+    This end point will update a recommendation category for all RELEVANT RECOMMENDATIONS
+    based on the data in the body
+    """
+    results = Recommendation.find_by_categoryId(categoryId)
+    if(len(results) == 0):
+           message = {'error' : 'Recommendation with categoryId: %s was not found' % str(categoryId)}
+           return_code = HTTP_404_NOT_FOUND
+           return jsonify(message), return_code
+
+    data = request.get_json()
+    i = 0
+    sizeOfResults = len(results)
+    while i < sizeOfResults:
+        recommendation = Recommendation.find(results[i].id)
+        recommendation.categoryId = data['categoryId']
+        recommendation.update()
+        i += 1
+    message = {'success' : 'RECOMMENDATIONS updated'}
+    return make_response('success', status.HTTP_200_OK)
 
 ######################################################################
 #   M A I N

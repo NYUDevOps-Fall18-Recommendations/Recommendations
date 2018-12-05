@@ -19,13 +19,13 @@ app.config['LOGGING_LEVEL'] = logging.INFO
 
 api = Api(app)
 
-from service.resources import RecommendationResource
-from service.resources import RecommendationCollection
-from service.resources import HomePage
+from .resources import RecommendationResource
+from .resources import RecommendationCollection
+from .resources import HomePage
 
 api.add_resource(HomePage, '/')
 api.add_resource(RecommendationCollection, '/recommendations')
-api.add_resource(RecommendationResource, '/recommendations/<string:id>>')
+api.add_resource(RecommendationResource, '/recommendations/<string:id>')
 # api.add_resource(PurchaseAction, '/recommendations/<recommendation_id>/purchase')
 
 # Set up logging for production

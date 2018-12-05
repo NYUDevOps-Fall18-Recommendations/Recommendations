@@ -20,7 +20,7 @@ class TestRecommendations(unittest.TestCase):
 
 	def setUp(self):
 		# sleep(0.5)
-		Recommendation.init_db("tests")
+		Recommendation.init_db()
 		# sleep(0.5)
 		Recommendation.remove_all()
 		# sleep(0.5)

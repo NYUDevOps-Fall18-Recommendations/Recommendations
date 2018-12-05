@@ -1,5 +1,5 @@
 """
-This module contains the Pet Collection Resource
+This module contains the Recommendation Collection Resource
 """
 from flask import request, abort
 from flask_restful import Resource
@@ -10,7 +10,7 @@ from service.models import Recommendation, DataValidationError
 from . import RecommendationResource
 
 class RecommendationCollection(Resource):
-    """ Handles all interactions with collections of Pets """
+    """ Handles all interactions with collections of Recommendations """
 
     def get(self):
         """ Returns all of the Recommendations """
@@ -34,8 +34,8 @@ class RecommendationCollection(Resource):
 
     def post(self):
         """
-        Creates a Pet
-        This endpoint will create a Pet based the data in the body that is posted
+        Creates a Recommendation
+        This endpoint will create a Recommendation based the data in the body that is posted
         or data that is sent via an html form post.
         """
         app.logger.info('Request to Create a Recommendation')
@@ -62,12 +62,13 @@ class RecommendationCollection(Resource):
             app.logger.info(message)
             abort(status.HTTP_400_BAD_REQUEST, message)
 
-        pet = Pet()
+        recommendation = Recommendation()
         try:
-            pet.deserialize(data)
+            recommendation.deserialize(data)
         except DataValidationError as error:
             raise BadRequest(str(error))
-        pet.save()
-        app.logger.info('Pet with new id [%s] saved!', pet.id)
-        location_url = api.url_for(PetResource, pet_id=pet.id, _external=True)
-        return pet.serialize(), status.HTTP_201_CREATED, {'Location': location_url}
+        recommendation.save()
+        app.logger.info('Recommendation with new id [%s] saved!', recommendation.id)
+        location_url = api.url_for(RecommendationResource, recommendation_id=recommendation.id, _external=True)
+        app.logger.info('Location url [%s]', location_url)
+        return recommendation.serialize(), status.HTTP_201_CREATED, {'Location': location_url}

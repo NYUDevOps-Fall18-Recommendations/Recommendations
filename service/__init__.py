@@ -21,12 +21,13 @@ api = Api(app)
 
 from .resources import RecommendationResource
 from .resources import RecommendationCollection
+from .resources import UpdateCategoryAction
 from .resources import HomePage
 
 api.add_resource(HomePage, '/')
 api.add_resource(RecommendationCollection, '/recommendations')
-api.add_resource(RecommendationResource, '/recommendations/<string:id>')
-# api.add_resource(PurchaseAction, '/recommendations/<recommendation_id>/purchase')
+api.add_resource(RecommendationResource, '/recommendations/<recommendation_id>')
+api.add_resource(UpdateCategoryAction, '/recommendations/category/<string:categoryId>')
 
 # Set up logging for production
 print('Setting up logging for {}...'.format(__name__))
@@ -45,4 +46,4 @@ app.logger.info('Logging established')
 @app.before_first_request
 def init_db(dbname="recommendations"):
     """ Initlaize the model """
-    Pet.init_db(dbname)
+    Recommendation.init_db(dbname)

@@ -9,7 +9,7 @@ import json
 import logging
 import unittest
 from time import sleep # use for rate limiting Cloudant Lite :(
-from models import Recommendation, DataValidationError
+from service.models import Recommendation, DataValidationError
 
 ######################################################################
 #  T E S T   C A S E S
@@ -19,11 +19,11 @@ class TestRecommendations(unittest.TestCase):
 	logger = logging.getLogger(__name__)
 
 	def setUp(self):
-		sleep(0.5)
-		Recommendation.init_db()
-		sleep(0.5)
+		# sleep(0.5)
+		Recommendation.init_db("tests")
+		# sleep(0.5)
 		Recommendation.remove_all()
-		sleep(0.5)
+		# sleep(0.5)
 
 	def test_create_a_recommendation(self): 
 		recommendation = Recommendation("productId", "suggestionId", "categoryId")

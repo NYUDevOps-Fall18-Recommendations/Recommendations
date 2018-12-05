@@ -9,9 +9,17 @@ import logging
 import json
 import os
 from time import sleep # use for rate limiting Cloudant Lite :(
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+
 from flask_api import status    # HTTP Status Codes
-from models import Recommendation, DataValidationError
-import service
+from service.models import Recommendation, DataValidationError
+from service import app
+
+# import unittest
+# import json
+# from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+# from service import app
+# from service.models import Pet
 
 # Status Codes
 HTTP_200_OK = 200
@@ -34,13 +42,13 @@ class TestRecommendationService(unittest.TestCase):
         """Runs before each test"""
         self.app = service.app.test_client()
         Recommendation.init_db("tests")
-        sleep(0.5)
+        # sleep(0.5)
         Recommendation.remove_all()
-        sleep(0.5)
+        # sleep(0.5)
         Recommendation(productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
-        sleep(0.5)
+        # sleep(0.5)
         Recommendation(productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
-        sleep(0.5)
+        # sleep(0.5)
 
     def tearDown(self):
         """Runs towards the end of each test"""

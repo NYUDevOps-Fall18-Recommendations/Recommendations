@@ -3,7 +3,7 @@ import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort
 from flask_api import status    # HTTP Status Codes
-from models import Recommendation, DataValidationError
+from .models import Recommendation, DataValidationError
 
 
 # Create Flask application

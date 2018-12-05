@@ -19,11 +19,11 @@ class TestRecommendations(unittest.TestCase):
 	logger = logging.getLogger(__name__)
 
 	def setUp(self):
-		# sleep(0.5)
+		sleep(0.5)
 		Recommendation.init_db()
-		# sleep(0.5)
+		sleep(0.5)
 		Recommendation.remove_all()
-		# sleep(0.5)
+		sleep(0.5)
 
 	def test_create_a_recommendation(self): 
 		recommendation = Recommendation("productId", "suggestionId", "categoryId")

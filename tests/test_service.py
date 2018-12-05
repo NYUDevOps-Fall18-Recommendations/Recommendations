@@ -1,5 +1,5 @@
 """
-Pet API Service Test Suite
+Recommendations API Service Test Suite
 Test cases can be run with the following:
 nosetests
 """
@@ -70,10 +70,21 @@ class TestRecommendationService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
     def test_create_recommendation(self):
+        # Count recommendations for testing
+        num_recs = self.get_recommendation_count()
         new_recommenation = dict(productId='Table', suggestionId='Chair', categoryId='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        # Set location header
+        location = resp.headers.get('Location', None) 
+        self.assertTrue(location is not None)
+        new_json = json.loads(resp.data)        
+        resp = self.app.get('/recommendations')
+        data = json.loads(resp.data)        
+        # Check that we've added one more recommendation
+        self.assertEqual(len(data), num_recs + 1)
+        self.assertIn(new_json, data)
 
     def test_create_recommendation_no_content_type(self):
         new_recommedation = {'categoryId': 'Sports'}

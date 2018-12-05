@@ -100,7 +100,7 @@ def list_recommendations():
 # RETRIEVE A RECOMMENDATION BY ID
 ######################################################################
 @app.route('/recommendations/<string:id>', methods=['GET'])
-def get_recommendation(id):
+def get_recommendations(id):
     """
     Retrieve a single recommendation
     This endpoint will return a recommendation based on it's id
@@ -124,8 +124,9 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.save()
     message = recommendation.serialize()
+    response = make_response(jsonify(message), status.HTTP_201_CREATED)
     response.headers['Location'] = url_for('get_recommendations', id=recommendation.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    return response
 
 ######################################################################
 # DELETE A Recommendation

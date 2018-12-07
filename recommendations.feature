@@ -19,31 +19,6 @@ Scenario: The server is running
   And I should not see "404 Not Found"
 
 
-Scenario: Create a Recommendation
-    When I visit the "Home Page"
-    And I set the "Productid" to "Grater"
-    And I set the "Suggestionid" to "Cheese Grater"
-    And I set the "Categoryid" to "Utensil"
-    And I press the "Create" button
-    Then I should see the message "Success"
-
-Scenario: List all recommendations
-    When I visit the "Home Page"
-    And I press the "Search" button
-    Then I should see "Infinity Gauntlet" in the results
-    And I should see "iPhone" in the results
-    And I should see "Soul Stone" in the results
-    And I should see "iphone Case" in the results
-    And I should see "airpod" in the results
-
-Scenario: List all Electronics
-    When I visit the "Home Page"
-    And I set the "Category" to "Electronics"
-    And I press the "Search" button
-    Then I should see "iPhone" in the results
-    And I should see "iphone Case" in the results
-    And I should see "airpod" in the results
-
 Scenario: Update a Recommendation
     When I visit the "Home Page"
     And I set the "Id" to "2"

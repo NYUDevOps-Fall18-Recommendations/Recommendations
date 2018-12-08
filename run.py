@@ -17,5 +17,5 @@ if __name__ == "__main__":
     print "*************************************************************"
     print " R E C O M M E N D A T I O N   S E R V I C E   R U N N I N G"
     print "*************************************************************"
-    server.initialize_logging()
+    #server.initialize_logging()
     app.run(host='0.0.0.0', port=int(PORT), debug=DEBUG)

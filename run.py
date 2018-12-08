@@ -4,11 +4,7 @@ Start the Recommendation Service and initializes logging
 """
 
 import os
-<<<<<<< HEAD
-from app import app, server
-=======
 from service import app, service
->>>>>>> e01020988b9fb35598c82b84e31c68359596c2e0
 
 # Pull options from environment
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')

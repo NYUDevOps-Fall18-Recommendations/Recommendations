@@ -42,3 +42,19 @@ Scenario: Update a Recommendation
     And I press the "Search" button
     Then I should see "airpod" in the "suggestionid" field of the product "iPhone"
     Then I should not see "iphone Case" in the "suggestionid" field of the product "iPhone"
+
+Scenario: Query by productId
+    When I visit the "Home Page"
+    And I set the "productId" to "iPhone"
+    And I press the "Query" button
+    Then I should see "iPhone" in the results
+    
+
+  
+
+
+
+
+
+
+

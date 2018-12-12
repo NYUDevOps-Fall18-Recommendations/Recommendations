@@ -36,6 +36,7 @@ def step_impl(context):
 def step_impl(context):
     """ Make a call to the base URL """
     context.driver.get(context.base_url)
+    context.resp = requests.get(context.base_url)
     #context.driver.save_screenshot('home_page.png')
 
 @then('I should see "{message}" in the title')

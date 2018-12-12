@@ -2,16 +2,20 @@
 This module contains the Recommendation Collection Resource
 """
 from flask import request, abort
-from flask_restful import Resource
+from flask_restplus import  Api, Resource, fields, reqparse
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import BadRequest
 from service import app, api
 from service.models import Recommendation, DataValidationError
 from . import RecommendationResource
 
+@api.route('/recommendations', strict_slashes=False)
 class RecommendationCollection(Resource):
     """ Handles all interactions with collections of Recommendations """
 
+    @api.doc('list_recommendations')
+    @api.expect(recommendation_args, validate=True)
+    @api.marshal_list_with(recommendation_model)
     def get(self):
         """ Returns all of the Recommendations """
         app.logger.info('Listing recommendations')
@@ -32,6 +36,9 @@ class RecommendationCollection(Resource):
         results = [recommendation.serialize() for recommendation in recommendations]
         return results, status.HTTP_200_OK
 
+    @api.doc('create_recommendations')
+    @api.expect(recommendation_args, validate=True)
+    @api.marshal_list_with(recommendation_model)
     def post(self):
         """
         Creates a Recommendation

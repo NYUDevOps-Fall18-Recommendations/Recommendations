@@ -4,14 +4,17 @@ This module contains routes without Resources
 """
 from flask import abort, request, jsonify
 from flask_api import status
-from flask_restful import Resource
+from flask_restplus import  Api, Resource, fields, reqparse
 from service.models import Recommendation
 
 ######################################################################
 # Update category of recommendations
 ######################################################################
+@api.route('recommendations/category')
 class UpdateCategoryAction(Resource):
     """ Resource to Purchase a Pet """
+    @api.doc('update category')
+    @api.marshal_with(recommendation_model)
     def put(self, categoryId):
 
         """

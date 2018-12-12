@@ -10,14 +10,33 @@ import os
 import sys
 import logging
 from flask import Flask
-from flask_restful import Api
+from flask_restplus import Api, fields, reqparse
+#from flask_restful import Api
 from .models import Recommendation, DataValidationError
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'please, tell nobody... Shhhh'
 app.config['LOGGING_LEVEL'] = logging.INFO
 
-api = Api(app)
+api = Api(app,
+          version='1.0.0',
+          title='Recommendation REST API Service',
+          description='This is a Recommendation server.',
+          default='recommnedations',
+          default_label='recommendation  operations',
+          doc='/' # default also could use doc='/apidocs/'
+          # prefix='/api'
+         )
+
+recommendation_model = api.model('recommendation', {
+   'id': fields.Integer(required=False, description='The unique number '),
+   'productId': fields.String(required=True, description='The unique id of the underlying product '),
+   'suggestionId': fields.String(required=True, description='The id or name of the product that is recommendaed when underlying product is bought'),
+   'categoryId': fields.String(required=True, description='The id or name of the cateogry of the underlying product')
+})
+
+recommendation_args = reqparse.RequestParser()
+recommendation_args.add_argument('condition', type=str, required=False, help='List recommendations')
 
 from .resources import RecommendationResource
 from .resources import RecommendationCollection

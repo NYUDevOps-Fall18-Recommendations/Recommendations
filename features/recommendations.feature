@@ -16,11 +16,20 @@ Scenario: The server is running
   Then I should see "Recommendation RESTful Service" in the title
   And I should not see "404 Not Found"
 
+Scenario: Read a Recommendation
+    When I visit the "Home Page"
+    And I set the "Id" to "2"
+    And I press the "Retrieve" button
+    Then I should see "iPhone" in the "productid" field
+    And I should see "iphone Case" in the "suggestionid" field
+    And I should see "Electronics" in the "categoryid" field
+
 Scenario: Update a Recommendation
     When I visit the "Home Page"
     And I set the "Id" to "2"
     And I press the "Retrieve" button
-    Then I should see "iPhone" in the "productid" field and "iphone Case" in the "suggestionid" field
+    Then I should see "iPhone" in the "productid" field
+    And I should see "iphone Case" in the "suggestionid" field
     When I change "suggestionid" to "airpod"
     And I press the "Update" button
     Then I should see the message "Success"

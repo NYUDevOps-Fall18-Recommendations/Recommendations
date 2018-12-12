@@ -11,7 +11,7 @@ from compare import expect, ensure
 # from selenium.webdriver.support.ui import WebDriverWait
 # from selenium.webdriver.support import expected_conditions
 
-# WAIT_SECONDS = 30
+WAIT_SECONDS = 3
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
 
 @given('the following recommendations')
@@ -23,9 +23,10 @@ def step_impl(context):
     create_url = context.base_url + '/recommendations'
     for row in context.table:
         data = {
-            "productid": row['productid'],
-            "suggestionid": row['suggestionid'],
-            "categoryid": row['categoryid'],
+            "id": row['id'],
+            "productId": row['productId'],
+            "suggestionId": row['suggestionId'],
+            "categoryId": row['categoryId'],
             }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
@@ -49,7 +50,7 @@ def step_impl(context, message):
 
 @when('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = 'recommendation_' + element_name.lower()
+    element_id = 'recommendation_' + element_name
     element = context.driver.find_element_by_id(element_id)
     element.clear()
     element.send_keys(text_string)

@@ -6,17 +6,17 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#pet_id").val(res.id);
-        $("#pet_name").val(res.productId);
-        $("#pet_category").val(res.suggestionId);
-        $("#pet_available").val(res.categoryId);
+        $("#recommendation_id").val(res.id);
+        $("#recommendation_productId").val(res.productId);
+        $("#recommendation_suggestionId").val(res.suggestionId);
+        $("#recommendation_categoryId").val(res.categoryId);
     }
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#pet_name").val("");
-        $("#pet_category").val("");
-        $("#pet_available").val("");
+        $("#recommendation_productId").val("");
+        $("#recommendation_suggestionId").val("");
+        $("#recommendation_categoryId").val("");
     }
 
     // Updates the flash message area
@@ -31,9 +31,9 @@ $(function () {
 
     $("#create-btn").click(function () {
 
-        var productId = $("#pet_name").val();
-        var suggestionId = $("#pet_category").val();
-        var categoryId = $("#pet_available").val()
+        var productId = $("#recommendation_productId").val();
+        var suggestionId = $("#recommendation_suggestionId").val();
+        var categoryId = $("#recommendation_categoryId").val()
 
         var data = {
             "productId": productId,
@@ -65,14 +65,14 @@ $(function () {
 
     $("#update-btn").click(function () {
 
-        var id = $("#pet_id").val();
-        //var productId = $("#pet_name").val();
-        //var suggestionId = $("#pet_category").val();
-        var categoryId = $("#pet_available").val() ;
+        var id = $("#recommendation_id").val();
+        var productId = $("#recommendation_productId").val();
+        var suggestionId = $("#recommendation_suggestionId").val();
+        var categoryId = $("#recommendation_categoryId").val() ;
 
         var data = {
-        //    "productId": productId,
-        //    "suggestionId": suggestionId,
+            "productId": productId,
+            "suggestionId": suggestionId,
             "categoryId": categoryId
         };
 
@@ -100,7 +100,7 @@ $(function () {
 
     $("#retrieve-btn").click(function () {
 
-        var id = $("#pet_id").val();
+        var id = $("#recommendation_id").val();
 
         var ajax = $.ajax({
             type: "GET",
@@ -128,7 +128,7 @@ $(function () {
 
     $("#delete-btn").click(function () {
 
-        var id = $("#pet_id").val();
+        var id = $("#recommendation_id").val();
 
         var ajax = $.ajax({
             type: "DELETE",
@@ -139,7 +139,7 @@ $(function () {
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Pet with ID [" + res.id + "] has been Deleted!")
+            flash_message("Pet with id [" + res.id + "] has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -152,8 +152,8 @@ $(function () {
     // ****************************************
     $("#action-btn").click(function () {
 
-        var id = $("#pet_id").val();
-        var categoryId = $("#pet_available").val() ;
+        var id = $("#recommendation_id").val();
+        var categoryId = $("#recommendation_categoryId").val() ;
 
         var data = {
             "categoryId": categoryId
@@ -185,7 +185,7 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#pet_id").val("");
+        $("#recommendation_id").val("");
         clear_form_data()
     });
 
@@ -195,9 +195,9 @@ $(function () {
 
     $("#search-btn").click(function () {
 
-        var productId = $("#pet_name").val();
-        var suggestionId = $("#pet_category").val();
-        var categoryId = $("#pet_available").val() == "true";
+        var productId = $("#recommendation_productId").val();
+        var suggestionId = $("#recommendation_suggestionId").val();
+        var categoryId = $("#recommendation_categoryId").val();
 
         var queryString = ""
 
@@ -231,7 +231,7 @@ $(function () {
             $("#search_results").empty();
             $("#search_results").append('<table class="table-striped">');
             var header = '<tr>'
-            header += '<th style="width:10%">ID</th>'
+            header += '<th style="width:10%">id</th>'
             header += '<th style="width:40%">ProductId</th>'
             header += '<th style="width:40%">suggestionId</th>'
             header += '<th style="width:10%">categoryId</th></tr>'

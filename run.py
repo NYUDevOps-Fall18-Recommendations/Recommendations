@@ -4,7 +4,7 @@ Start the Recommendation Service and initializes logging
 """
 
 import os
-from service import app, service
+from service import app
 
 
 # Pull options from environment

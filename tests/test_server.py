@@ -45,9 +45,9 @@ class TestRecommendationService(unittest.TestCase):
         sleep(0.5)
         Recommendation.remove_all()
         sleep(0.5)
-        Recommendation(productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
+        Recommendation(id=1, productId='Infinity Gauntlet', suggestionId='Soul Stone', categoryId='Comics').save()
         sleep(0.5)
-        Recommendation(productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
+        Recommendation(id=2, productId='iPhone', suggestionId='iphone Case', categoryId='Electronics').save()
         sleep(0.5)
 
     def tearDown(self):
@@ -67,7 +67,7 @@ class TestRecommendationService(unittest.TestCase):
     def test_get_recommendation(self):
         # self.assertEqual(self.get_recommendation_count(), 2)
         recommendation = self.get_recommendation('iPhone')[0]
-        resp = self.app.get('/recommendations/{}'.format(recommendation['_id']))
+        resp = self.app.get('/recommendations/2')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = json.loads(resp.data)
         self.assertEqual(data['suggestionId'], 'iphone Case')
@@ -77,7 +77,7 @@ class TestRecommendationService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
     def test_create_recommendation(self):
-        new_recommenation = dict(productId='Table', suggestionId='Chair', categoryId='Home Appliances')
+        new_recommenation = dict(id=3, productId='Table', suggestionId='Chair', categoryId='Home Appliances')
         data = json.dumps(new_recommenation)
         resp = self.app.post('/recommendations', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
@@ -108,13 +108,13 @@ class TestRecommendationService(unittest.TestCase):
         recommendation = self.get_recommendation('iPhone')[0]
         new_recommedation = dict(productId='iPhone', suggestionId='iphone pop ups', categoryId='Electronics')
         data = json.dumps(new_recommedation)
-        resp = self.app.put('/recommendations/{}'.format(recommendation['_id']), data=data, content_type='application/json')
+        resp = self.app.put('/recommendations/2', data=data, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_json = json.loads(resp.data)
         self.assertEqual(new_json['suggestionId'], 'iphone pop ups')
 
     def test_update_recommendation_not_found(self):
-        new_reco = dict(productId='samsung', suggestionId='samsung pop ups', categoryId='Electronocs')
+        new_reco = dict(id=3,productId='samsung', suggestionId='samsung pop ups', categoryId='Electronocs')
         data = json.dumps(new_reco)
         invalidId = "123"
         recommendation = self.get_recommendation('iPhone')[0]
@@ -147,7 +147,7 @@ class TestRecommendationService(unittest.TestCase):
         recommendation_count = self.get_recommendation_count()
         # delete a recommendation
         recommendation = self.get_recommendation('iPhone')[0]
-        resp = self.app.delete('/recommendations/{}'.format(recommendation['_id']), content_type='application/json')
+        resp = self.app.delete('/recommendations/2', content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_recommendation_count()

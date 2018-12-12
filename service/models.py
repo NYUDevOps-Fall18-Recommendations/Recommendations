@@ -29,20 +29,32 @@ class Recommendation(object):
 
     recommendations = []
 
-    def __init__(self, productId=None, suggestionId=None, categoryId=None):
+    def __init__(self, id, productId=None, suggestionId=None, categoryId=None):
         """ Constructor """
-        self.id = None
+        if not isinstance(id, int):
+            raise DataValidationError("Invalid data: expected int in id, received " + str(type(id)))
+        self.id = id
         self.productId = productId
         self.suggestionId = suggestionId
         self.categoryId = categoryId
 
     def save(self):
-        if self.productId is None:   # productId is the only required field
-            raise DataValidationError('productId attribute is not set')
-        if self.id:
-            self.update()
+        try:
+            document = self.database[str(self.id)]
+            if not document.exists():
+                document = None
+        except KeyError:
+            document = None
+        doc = self.serialize()
+        doc['_id'] = str(doc['id'])
+        del doc['id']
+        if document:
+            self.logger.info("Adding new doc " + str(document))
+            document.update(doc)
+            document.save()
         else:
-            self.create()
+            self.logger.info("Adding new doc  " + str(doc))
+            document = self.database.create_document(doc)
 
     def create(self):
         if self.productId is None:   # productId is the only required field
@@ -59,16 +71,16 @@ class Recommendation(object):
 
     def delete(self):
         try:
-            document = self.database[self.id]
+            document = self.database[str(self.id)]
         except KeyError:
             document = None
             Recommendation.logger.info('Unable to delete Recommendation with id %s', self.id)
         if document:
             document.delete()
 
-    def update(self): 
+    def update(self):
         try:
-            document = self.database[self.id]
+            document = self.database[str(self.id)]
         except KeyError:
             document = None
             Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
@@ -79,12 +91,13 @@ class Recommendation(object):
     def serialize(self):
         """ Serializes a Recommendation into a dictionary """
         recommendation = {
-            "productId": self.productId, 
-            "suggestionId": self.suggestionId, 
+            "id": self.id,
+            "productId": self.productId,
+            "suggestionId": self.suggestionId,
             "categoryId": self.categoryId
         }
-        if self.id:
-            recommendation['_id'] = self.id
+        #if self.id:
+        #    recommendation['_id'] = self.id
         return recommendation
 
     def deserialize(self, data):
@@ -103,8 +116,8 @@ class Recommendation(object):
         except TypeError as error:
             raise DataValidationError('Invalid recommendation: body of request contained bad or no data')
         # if there is no id and the data has one, assign it
-        if not self.id and '_id' in data:
-            self.id = data['_id']
+        #if not self.id and '_id' in data:
+        #    self.id = data['_id']
 
         return self
 
@@ -133,18 +146,19 @@ class Recommendation(object):
         """ Query that returns all recommendations """
         results = []
         for doc in cls.database:
-            recommendation = Recommendation().deserialize(doc)
-            recommendation.id = doc['_id']
+            recommendation = Recommendation(int(doc['_id']))
+            recommendation.deserialize(doc)
+            #recommendation.id = doc['_id']
             results.append(recommendation)
         return results
 
 
     @classmethod
-    def find(cls, targetId): 
+    def find(cls, targetId):
         """ Query that finds Recommendation by their id """
         try:
-            document = cls.database[targetId]
-            return Recommendation().deserialize(document)
+            document = cls.database[str(targetId)]
+            return Recommendation(int(document['_id'])).deserialize(document)
         except KeyError:
             return None
 
@@ -154,7 +168,7 @@ class Recommendation(object):
         query = Query(cls.database, selector=kwargs)
         results = []
         for doc in query.result:
-            recommendation = Recommendation()
+            recommendation = Recommendation(int(doc['_id']))
             recommendation.deserialize(doc)
             results.append(recommendation)
         return results

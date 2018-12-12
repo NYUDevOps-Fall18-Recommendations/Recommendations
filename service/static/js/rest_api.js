@@ -66,13 +66,13 @@ $(function () {
     $("#update-btn").click(function () {
 
         var id = $("#pet_id").val();
-        var productId = $("#pet_name").val();
-        var suggestionId = $("#pet_category").val();
+        //var productId = $("#pet_name").val();
+        //var suggestionId = $("#pet_category").val();
         var categoryId = $("#pet_available").val() ;
 
         var data = {
-            "productId": productId,
-            "suggestionId": suggestionId,
+        //    "productId": productId,
+        //    "suggestionId": suggestionId,
             "categoryId": categoryId
         };
 
@@ -148,6 +148,39 @@ $(function () {
     });
 
     // ****************************************
+    // perform action
+    // ****************************************
+    $("#action-btn").click(function () {
+
+        var id = $("#pet_id").val();
+        var categoryId = $("#pet_available").val() ;
+
+        var data = {
+            "categoryId": categoryId
+        };
+
+
+
+        var ajax = $.ajax({
+                type: "PUT",
+                url: "/recommendations/category/" + id,
+                contentType:"application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+
+    // ****************************************
     // Clear the form
     // ****************************************
 
@@ -199,13 +232,13 @@ $(function () {
             $("#search_results").append('<table class="table-striped">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
-            header += '<th style="width:40%">Name</th>'
-            header += '<th style="width:40%">Category</th>'
-            header += '<th style="width:10%">Available</th></tr>'
+            header += '<th style="width:40%">ProductId</th>'
+            header += '<th style="width:40%">suggestionId</th>'
+            header += '<th style="width:10%">categoryId</th></tr>'
             $("#search_results").append(header);
             for(var i = 0; i < res.length; i++) {
                 recommendation = res[i];
-                var row = "<tr><td>"+pet.id+"</td><td>"+pet.productId+"</td><td>"+pet.suggestionId+"</td><td>"+pet.categoryId+"</td></tr>";
+                var row = "<tr><td>"+recommendation._id+"</td><td>"+recommendation.productId+"</td><td>"+recommendation.suggestionId+"</td><td>"+recommendation.categoryId+"</td></tr>";
                 $("#search_results").append(row);
             }
 

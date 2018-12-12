@@ -3,7 +3,7 @@
 ## Travis CI
 [![Build Status](https://travis-ci.org/NYUDevOps-Fall18-Recommendations/recommendations.svg?branch=master)](https://travis-ci.org/NYUDevOps-Fall18-Recommendations/recommendations)
 
-This is the working repository for NYU DevOps Fall 18 "Recommendations" team.
+This is the repository for NYU DevOps Fall 18 "Recommendations" team.
 
 
 **Steps to run and test the app:** 
@@ -16,25 +16,29 @@ This is the working repository for NYU DevOps Fall 18 "Recommendations" team.
 
 ## RESTful API
 
-### 1. List all recommendations
+### 1. List all Recommendations
 
   GET /recommendations
   
-### 2. Retrieve a single recommendation with input "id" (int)
+### 2. Returns a Recommendation with the id
 
-  GET /recommendations/<id> 
+  GET /recommendations/id
   
-### 3. Create a recommendation
+### 3. Create a Recommendation
  
   POST /recommendations
  
-### 4. Delete a recommendation with input "id" (int)
+### 4. Deletes a Recommendation with the id
 
-  DELETE /recommendations/<id>
+  DELETE /recommendations/id
   
-### 5. Update a recommendation with input "id" (int)
+### 5. Update a Recommendation with the id
 
-  PUT /recommendations/<id>
+  PUT /recommendations/id
+
+### 6. Update the category of a Recommendation
+
+  PUT /recommendations/category/<old category>
 
 
     

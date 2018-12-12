@@ -9,8 +9,7 @@ Background:
         |  1 | Infinity Gauntlet | Soul Stone        | Comics      |
         |  2 | iPhone            | iphone Case       | Electronics |
         |  3 | Soul Stone        | Infinity Gauntlet | Comics      |
-  		|  4 | iphone Case       | iPhone            | Electronics |
-  		|  5 | airpod            | iPhone            | Electronics |
+  		  |  4 | iphone Case       | iPhone            | Electronics |
   
 Scenario: The server is running
   When I visit the "Home Page"
@@ -32,3 +31,12 @@ Scenario: Update a Recommendation
     And I press the "Search" button
     Then I should see "airpod" in the "suggestionid" field of the product "iPhone" 
     Then I should not see "iphone Case" in the "suggestionid" field of the product "iPhone"
+
+Scenario: List all recommendations
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "Infinity Gauntlet" in the results
+    And I should see "iPhone" in the results
+    And I should see "Soul Stone" in the results
+    And I should see "iphone Case" in the results
+    

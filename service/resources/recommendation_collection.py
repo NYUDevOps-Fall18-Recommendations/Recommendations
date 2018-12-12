@@ -62,7 +62,7 @@ class RecommendationCollection(Resource):
             app.logger.info(message)
             abort(status.HTTP_400_BAD_REQUEST, message)
 
-        recommendation = Recommendation()
+        recommendation = Recommendation(data["id"])
         try:
             recommendation.deserialize(data)
         except DataValidationError as error:

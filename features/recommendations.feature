@@ -5,7 +5,7 @@ Feature: The recommendations service back-end
 
 Background:
 	Given the following pets
-        | id | productuid        | suggestionid      | categoryid  |
+        | id | productid        | suggestionid      | categoryid  |
         |  1 | Infinity Gauntlet | Soul Stone        | Comics      |
         |  2 | iPhone            | iphone Case       | Electronics |
         |  3 | Soul Stone        | Infinity Gauntlet | Comics      |
@@ -32,6 +32,15 @@ Scenario: Update a Recommendation
     Then I should see "airpod" in the "suggestionid" field of the product "iPhone" 
     Then I should not see "iphone Case" in the "suggestionid" field of the product "iPhone"
 
+Scenario: Delete a recommendation
+    When I visit the "Home Page"
+    And I set the "productid" to "iPhone"
+    And I press the "Delete" button
+    Then I should not see "iPhone" in the results
+    When I set the "productid" to "iphone Case"
+    And I press the "Retrieve" button
+    Then I should see "null" in the "suggestionid" field
+
 Scenario: List all recommendations
     When I visit the "Home Page"
     And I press the "Search" button
@@ -39,4 +48,5 @@ Scenario: List all recommendations
     And I should see "iPhone" in the results
     And I should see "Soul Stone" in the results
     And I should see "iphone Case" in the results
-    
+
+

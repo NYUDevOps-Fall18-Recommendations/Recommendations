@@ -56,6 +56,12 @@ def step_impl(context, element_name, text_string):
     element.clear()
     element.send_keys(text_string)
 
+@when('I set the old_categoryId to "{text_string}"')
+def step_impl(context, text_string):
+    element_id = 'recommendation_old_categoryId'
+    element = context.driver.find_element_by_id(element_id)
+    element.clear()
+    element.send_keys(text_string)
 
 ##################################################################
 # This code works because of the following naming convention:

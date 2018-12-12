@@ -66,13 +66,13 @@ $(function () {
     $("#update-btn").click(function () {
 
         var id = $("#pet_id").val();
-        var productId = $("#pet_name").val();
-        var suggestionId = $("#pet_category").val();
+        //var productId = $("#pet_name").val();
+        //var suggestionId = $("#pet_category").val();
         var categoryId = $("#pet_available").val() ;
 
         var data = {
-            "productId": productId,
-            "suggestionId": suggestionId,
+        //    "productId": productId,
+        //    "suggestionId": suggestionId,
             "categoryId": categoryId
         };
 
@@ -146,6 +146,39 @@ $(function () {
             flash_message("Server error!")
         });
     });
+
+    // ****************************************
+    // perform action
+    // ****************************************
+    $("#action-btn").click(function () {
+
+        var id = $("#pet_id").val();
+        var categoryId = $("#pet_available").val() ;
+
+        var data = {
+            "categoryId": categoryId
+        };
+
+
+
+        var ajax = $.ajax({
+                type: "PUT",
+                url: "/recommendations/category/" + id,
+                contentType:"application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
 
     // ****************************************
     // Clear the form

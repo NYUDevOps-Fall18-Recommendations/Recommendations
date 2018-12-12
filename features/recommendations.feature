@@ -61,3 +61,12 @@ Scenario: get one recommendation
     And I set the "id" to "2"
     And I press the "Retrieve" button
     Then I should see "iPhone" in the "productId" field
+
+Scenario: Update Category Action
+   When I visit the "Home Page"
+   And I set the old_categoryId to "Comics"
+   And I set the "categoryId" to "Modern Comics"
+   And I press the "Action" button
+   And I press the "Clear" button
+   And I press the "Search" button
+   Then I should see "Modern Comics" in the results

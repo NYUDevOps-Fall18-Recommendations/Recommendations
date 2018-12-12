@@ -18,6 +18,7 @@ $(function () {
         $("#recommendation_productId").val("");
         $("#recommendation_suggestionId").val("");
         $("#recommendation_categoryId").val("");
+        $("#recommendation_old_categoryId").val("");
     }
 
     // Updates the flash message area
@@ -156,7 +157,7 @@ $(function () {
     // ****************************************
     $("#action-btn").click(function () {
 
-        var id = $("#recommendation_id").val();
+        var id = $("#recommendation_old_categoryId").val();
         var categoryId = $("#recommendation_categoryId").val() ;
 
         var data = {

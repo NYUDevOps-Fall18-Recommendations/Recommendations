@@ -64,3 +64,10 @@ class RecommendationResource(Resource):
         if recommendation:
             recommendation.delete()
         return '', status.HTTP_204_NO_CONTENT
+
+class ResetRecommendations(Resource):
+    def delete(self):
+        """ Removes all recommendations from the database """
+        # app.logger.info(os.environ)
+        Recommendation.remove_all()
+        return '', status.HTTP_204_NO_CONTENT

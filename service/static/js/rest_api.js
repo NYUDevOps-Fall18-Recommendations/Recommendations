@@ -14,6 +14,7 @@ $(function () {
 
     /// Clears all form fields
     function clear_form_data() {
+        $("#recommendation_id").val("");
         $("#recommendation_productId").val("");
         $("#recommendation_suggestionId").val("");
         $("#recommendation_categoryId").val("");
@@ -26,16 +27,18 @@ $(function () {
     }
 
     // ****************************************
-    // Create a Pet
+    // Create a Recommendation
     // ****************************************
 
     $("#create-btn").click(function () {
 
+        var id = $("#recommendation_id").val();
         var productId = $("#recommendation_productId").val();
         var suggestionId = $("#recommendation_suggestionId").val();
         var categoryId = $("#recommendation_categoryId").val()
 
         var data = {
+            "id": parseInt(id,10),
             "productId": productId,
             "suggestionId": suggestionId,
             "categoryId": categoryId
@@ -60,7 +63,7 @@ $(function () {
 
 
     // ****************************************
-    // Update a Pet
+    // Update a Recommendation
     // ****************************************
 
     $("#update-btn").click(function () {
@@ -71,6 +74,7 @@ $(function () {
         var categoryId = $("#recommendation_categoryId").val() ;
 
         var data = {
+            "id": parseInt(id,10),
             "productId": productId,
             "suggestionId": suggestionId,
             "categoryId": categoryId
@@ -95,7 +99,7 @@ $(function () {
     });
 
     // ****************************************
-    // Retrieve a Pet
+    // Retrieve a Recommandation
     // ****************************************
 
     $("#retrieve-btn").click(function () {
@@ -123,7 +127,7 @@ $(function () {
     });
 
     // ****************************************
-    // Delete a Pet
+    // Delete a Recommendation
     // ****************************************
 
     $("#delete-btn").click(function () {
@@ -139,7 +143,7 @@ $(function () {
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Pet with id [" + res.id + "] has been Deleted!")
+            flash_message("Recommendation with id [" + res.id + "] has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -190,11 +194,12 @@ $(function () {
     });
 
     // ****************************************
-    // Search for a Pet
+    // Search for a Recommandation
     // ****************************************
 
     $("#search-btn").click(function () {
 
+        var id = $("#recommendation_id").val();
         var productId = $("#recommendation_productId").val();
         var suggestionId = $("#recommendation_suggestionId").val();
         var categoryId = $("#recommendation_categoryId").val();
@@ -238,7 +243,7 @@ $(function () {
             $("#search_results").append(header);
             for(var i = 0; i < res.length; i++) {
                 recommendation = res[i];
-                var row = "<tr><td>"+recommendation._id+"</td><td>"+recommendation.productId+"</td><td>"+recommendation.suggestionId+"</td><td>"+recommendation.categoryId+"</td></tr>";
+                var row = "<tr><td>"+recommendation.id+"</td><td>"+recommendation.productId+"</td><td>"+recommendation.suggestionId+"</td><td>"+recommendation.categoryId+"</td></tr>";
                 $("#search_results").append(row);
             }
 

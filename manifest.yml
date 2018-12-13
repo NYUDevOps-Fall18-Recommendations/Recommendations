@@ -3,7 +3,7 @@
 applications:
 - name: nyu-recommendation-service-f18
   memory: 256M
-  instances: 2
+  instances: 1
   timeout: 180
   #random-route: true
   host: nyu-recommendation-service-f18
@@ -16,4 +16,4 @@ applications:
   # - Cloudant
   env:
     FLASK_APP : server
-    FLASK_DEBUG : false 
+    FLASK_DEBUG : false

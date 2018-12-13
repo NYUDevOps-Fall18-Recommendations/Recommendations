@@ -21,7 +21,10 @@ before_script:
   - curl -X PUT http://admin:pass@localhost:5984/test
 
 # command to run tests
-script: nosetests
+script:
+  - nosetests
+  - honcho start &
+  - behave
 
 after_success:
   - codecov

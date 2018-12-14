@@ -8,6 +8,7 @@ import unittest
 import logging
 import json
 import os
+from flask import abort, request
 from time import sleep # use for rate limiting Cloudant Lite :(
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 
@@ -86,11 +87,23 @@ class TestRecommendationService(unittest.TestCase):
         location = resp.headers.get('Location', None)
         self.assertNotEqual(location, None)
 
+    def test_create_recommendation_bad_content_type_format(self):
+        new_recommenation = dict(id=3, productId='Table', suggestionId='Chair', categoryId='Home Appliances')
+        data = json.dumps(new_recommenation)
+        resp = self.app.post('/recommendations', data=data, content_type='application/XML')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_create_recommendation_no_content_type(self):
         new_recommedation = {'categoryId': 'Sports'}
         data = json.dumps(new_recommedation)
         resp = self.app.post('/recommendations', data=data)
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
+
+    #def test_create_recommendation_no_content_type(self):
+    #    recommendation = Recommendation(0)
+    #    self.assertRaises(DataValidationError, recommendation.deserialize, None)
+
+    
 
     def test_call_recommendation_with_an_id(self):
         new_reco = {'productId': 'Car', 'categoryId': 'Automobile'}
@@ -142,6 +155,17 @@ class TestRecommendationService(unittest.TestCase):
         query_item = data[0]
         self.assertEqual(query_item['categoryId'], 'Electronics')
 
+    def test_query_recommendation_by_suggestionId(self):
+        resp = self.app.get('/recommendations', query_string='suggestionId=iphone Case')
+        data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 1)
+        self.assertIn('iphone Case', resp.data)
+        self.assertNotIn('Infinity Gauntlet', resp.data)
+        data = json.loads(resp.data)
+        query_item = data[0]
+        self.assertEqual(query_item['categoryId'], 'Electronics')
+
     def test_delete_recommendation(self):
         # save the current number of recommendations for later comparrison
         recommendation_count = self.get_recommendation_count()
@@ -153,6 +177,7 @@ class TestRecommendationService(unittest.TestCase):
         new_count = self.get_recommendation_count()
         self.assertEqual(new_count, recommendation_count - 1)
 
+
     def test_update_recommendationCategory(self):
          new_category = { 'categoryId': 'vehilceInsurance'}
          data = json.dumps(new_category)
@@ -163,6 +188,16 @@ class TestRecommendationService(unittest.TestCase):
          dataToUpdate = dict(categoryId='vehicleInsurance')
          resp = self.app.put('/recommendations/category/Mechanics', data=dataToUpdate, content_type='application/json')
          self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    
+
+#class TestResetRecommendations(unittest.TestCase):
+#    def test_delete_all_recommendations(self):
+#       recommendation = Recommendation.all()
+#        resp = self.app.delete('/recommendations', content_type='application/json')
+#        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        #self.assertEqual(len(resp.data), 0)
+    
 
 ######################################################################
 # Utility functions

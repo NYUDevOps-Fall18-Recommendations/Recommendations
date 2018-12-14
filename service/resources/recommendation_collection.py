@@ -38,7 +38,7 @@ class RecommendationCollection(Resource):
         This endpoint will create a Recommendation based the data in the body that is posted
         or data that is sent via an html form post.
         """
-        app.logger.info('Request to Create a Recommendation')
+        #app.logger.info('Request to Create a Recommendation')
         content_type = request.headers.get('Content-Type')
         if not content_type:
             abort(status.HTTP_400_BAD_REQUEST, "No Content-Type set")
@@ -46,20 +46,19 @@ class RecommendationCollection(Resource):
         data = {}
         # Check for form submission data
         if content_type == 'application/x-www-form-urlencoded':
-            app.logger.info('Processing FORM data')
-            app.logger.info(type(request.form))
-            app.logger.info(request.form)
+            #app.logger.info('Processing FORM data')
+            #app.logger.info(type(request.form))
+            #app.logger.info(request.form)
             data = {
-                'name': request.form['name'],
-                'category': request.form['category'],
-                'available': request.form['available'].lower() in ['yes', 'y', 'true', 't', '1']
+                'productId': request.form['productId'],
+                'suggestionId': request.form['suggestionId'],
+                'categoryId': request.form['categoryId'],
             }
         elif content_type == 'application/json':
             app.logger.info('Processing JSON data')
             data = request.get_json()
         else:
             message = 'Unsupported Content-Type: {}'.format(content_type)
-            app.logger.info(message)
             abort(status.HTTP_400_BAD_REQUEST, message)
 
         recommendation = Recommendation(data["id"])
@@ -68,7 +67,7 @@ class RecommendationCollection(Resource):
         except DataValidationError as error:
             raise BadRequest(str(error))
         recommendation.save()
-        app.logger.info('Recommendation with new id [%s] saved!', recommendation.id)
+        #app.logger.info('Recommendation with new id [%s] saved!', recommendation.id)
         location_url = api.url_for(RecommendationResource, recommendation_id=recommendation.id, _external=True)
-        app.logger.info('Location url [%s]', location_url)
+        #app.logger.info('Location url [%s]', location_url)
         return recommendation.serialize(), status.HTTP_201_CREATED, {'Location': location_url}

@@ -56,34 +56,33 @@ class Recommendation(object):
             self.logger.info("Adding new doc  " + str(doc))
             document = self.database.create_document(doc)
 
-    def create(self):
-        if self.productId is None:   # productId is the only required field
-            raise DataValidationError('name attribute is not set')
+    #def create(self):
+    #    if self.productId is None:   # productId is the only required field
+    #        raise DataValidationError('name attribute is not set')
 
-        try:
-            document = self.database.create_document(self.serialize())
-        except HTTPError as err:
-            Recommendation.logger.warning('Create failed: %s', err)
-            return
+    #   try:
+    #        document = self.database.create_document(self.serialize())
+    #    except HTTPError as err:
+    #        Recommendation.logger.warning('Create failed: %s', err)
+    #        return
 
-        if document.exists():
-            self.id = document['_id']
+    #   if document.exists():
+    #        self.id = document['_id']
 
     def delete(self):
-        try:
-            document = self.database[str(self.id)]
-        except KeyError:
-            document = None
-            Recommendation.logger.info('Unable to delete Recommendation with id %s', self.id)
+        document = self.database[str(self.id)]
+        #except KeyError:
+        #    document = None
+            #Recommendation.logger.info('Unable to delete Recommendation with id %s', self.id)
         if document:
             document.delete()
 
     def update(self):
-        try:
-            document = self.database[str(self.id)]
-        except KeyError:
-            document = None
-            Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
+        
+        document = self.database[str(self.id)]
+        #except KeyError:
+        #   document = None
+        #   Recommendation.logger.info('Unable to locate Recommendation with id %s for update', self.id)
         if document:
             document.update(self.serialize())
             document.save()
@@ -201,11 +200,11 @@ class Recommendation(object):
         vcap_services = {}
         # Try and get VCAP from the environment or a file if developing
         if 'VCAP_SERVICES' in os.environ:
-            Recommendation.logger.info('Running in Bluemix mode.')
+            #Recommendation.logger.info('Running in Bluemix mode.')
             vcap_services = json.loads(os.environ['VCAP_SERVICES'])
         # if VCAP_SERVICES isn't found, maybe we are running on Kubernetes?
         elif 'BINDING_CLOUDANT' in os.environ:
-            Recommendation.logger.info('Found Kubernetes Bindings')
+            #Recommendation.logger.info('Found Kubernetes Bindings')
             creds = json.loads(os.environ['BINDING_CLOUDANT'])
             vcap_services = {"cloudantNoSQLDB": [{"credentials": creds}]}
         else:
@@ -230,30 +229,30 @@ class Recommendation(object):
                 opts['url'] = cloudant_service['credentials']['url']
 
         if any(k not in opts for k in ('host', 'username', 'password', 'port', 'url')):
-            Recommendation.logger.info('Error - Failed to retrieve options. ' \
-                             'Check that app is bound to a Cloudant service.')
+            #Recommendation.logger.info('Error - Failed to retrieve options. ' \
+            #                 'Check that app is bound to a Cloudant service.')
             exit(-1)
 
         Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
-        try:
-            if ADMIN_PARTY:
-                Recommendation.logger.info('Running in Admin Party Mode...')
-            Recommendation.client = Cloudant(opts['username'],
+        #try:
+            #if ADMIN_PARTY:
+                #Recommendation.logger.info('Running in Admin Party Mode...')
+        Recommendation.client = Cloudant(opts['username'],
                                   opts['password'],
                                   url=opts['url'],
                                   connect=True,
                                   auto_renew=True,
                                   admin_party=ADMIN_PARTY
                                  )
-        except ConnectionError:
-            raise AssertionError('Cloudant service could not be reached')
+        #except ConnectionError:
+        #    raise AssertionError('Cloudant service could not be reached')
 
         # Create database if it doesn't exist
-        try:
-            Recommendation.database = Recommendation.client[dbname]
-        except KeyError:
-            # Create a database using an initialized client
-            Recommendation.database = Recommendation.client.create_database(dbname)
+        #try:
+        Recommendation.database = Recommendation.client[dbname]
+        #except KeyError:
+        Recommendation.database = Recommendation.client.create_database(dbname)
+        # Create a database using an initialized client
         # check for success
-        if not Recommendation.database.exists():
-            raise AssertionError('Database [{}] could not be obtained'.format(dbname))
+        #if not Recommendation.database.exists():
+        #    raise AssertionError('Database [{}] could not be obtained'.format(dbname))

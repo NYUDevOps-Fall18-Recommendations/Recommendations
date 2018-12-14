@@ -7,9 +7,9 @@ import json
 import requests
 from behave import *
 from compare import expect, ensure
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 
 WAIT_SECONDS = 3
 BASE_URL = getenv('BASE_URL', 'http://localhost:5000/')
@@ -56,6 +56,12 @@ def step_impl(context, element_name, text_string):
     element.clear()
     element.send_keys(text_string)
 
+@when('I set the old_categoryId to "{text_string}"')
+def step_impl(context, text_string):
+    element_id = 'recommendation_old_categoryId'
+    element = context.driver.find_element_by_id(element_id)
+    element.clear()
+    element.send_keys(text_string)
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -72,15 +78,14 @@ def step_impl(context, button):
 
 @then('I should see "{productid}" in the results')
 def step_impl(context, productid):
-    element = context.driver.find_element_by_id('search_results')
-    expect(element.text).to_contain(productid)
-    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.text_to_be_present_in_element(
-    #         (By.ID, 'search_results'),
-    #         name
-    #     )
-    # )
-    # expect(found).to_be(True)
+    #element = context.driver.find_element_by_id('search_results')
+    #expect(element.text).to_contain(productid)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+    expected_conditions.text_to_be_present_in_element(
+        (By.ID, 'search_results'),
+         productid)
+    )
+    expect(found).to_be(True)
 
 @then('I should not see "{productid}" in the results')
 def step_impl(context, productid):
@@ -90,15 +95,15 @@ def step_impl(context, productid):
 
 @then('I should see the message "{message}"')
 def step_impl(context, message):
-    element = context.driver.find_element_by_id('flash_message')
-    expect(element.text).to_contain(message)
-    # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
-    #     expected_conditions.text_to_be_present_in_element(
-    #         (By.ID, 'flash_message'),
-    #         message
-    #     )
-    # )
-    # expect(found).to_be(True)
+    #element = context.driver.find_element_by_id('flash_message')
+    #expect(element.text).to_contain(message)
+    found = WebDriverWait(context.driver, WAIT_SECONDS).until(
+    expected_conditions.text_to_be_present_in_element(
+             (By.ID, 'flash_message'),
+             message
+         )
+    )
+    expect(found).to_be(True)
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -109,7 +114,7 @@ def step_impl(context, message):
 
 @then('I should see "{text_string}" in the "{element_name}" field')
 def step_impl(context, text_string, element_name):
-    element_id = 'recommendation_' + element_name.lower()
+    element_id = 'recommendation_' + element_name
     element = context.driver.find_element_by_id(element_id)
     expect(element.get_attribute('value')).to_equal(text_string)
     # found = WebDriverWait(context.driver, WAIT_SECONDS).until(
@@ -122,7 +127,7 @@ def step_impl(context, text_string, element_name):
 
 @when('I change "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
-    element_id = 'recommendation_' + element_name.lower()
+    element_id = 'recommendation_' + element_name
     element = context.driver.find_element_by_id(element_id)
     # element = WebDriverWait(context.driver, WAIT_SECONDS).until(
     #     expected_conditions.presence_of_element_located((By.ID, element_id))

@@ -8,6 +8,7 @@ import os
 import json
 import logging
 import unittest
+from cloudant.client import Cloudant
 from time import sleep # use for rate limiting Cloudant Lite :(
 from service.models import Recommendation, DataValidationError
 
@@ -25,6 +26,13 @@ class TestRecommendations(unittest.TestCase):
 		Recommendation.remove_all()
 		sleep(0.5)
 
+	def test_db(self):
+		Recommendation.database = None
+		Recommendation.database = Recommendation.client.create_database('recommendations')
+
+
+
+
 	def test_create_a_recommendation(self):
 		recommendation = Recommendation(1, "productId", "suggestionId", "categoryId")
 		self.assertNotEqual(recommendation, None)
@@ -32,6 +40,7 @@ class TestRecommendations(unittest.TestCase):
 		self.assertEqual(recommendation.productId, "productId")
 		self.assertEqual(recommendation.suggestionId, "suggestionId")
 		self.assertEqual(recommendation.categoryId, "categoryId")
+
 
 	def test_delete_a_recommendation(self):
 		recommendation = Recommendation(1, "productId", "recommended", "categoryId")

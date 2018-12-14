@@ -26,7 +26,7 @@ class RecommendationResource(Resource):
         Retrieve a single Recommendation
         This endpoint will return a Recommendation based on it's id
         """
-        app.logger.info("Request to Retrieve a recommendation with id [%s]", recommendation_id)
+        #app.logger.info("Request to Retrieve a recommendation with id [%s]", recommendation_id)
         recommendation = Recommendation.find(recommendation_id)
         if not recommendation:
             abort(status.HTTP_404_NOT_FOUND, "Recommendation with id '{}' was not found.".format(recommendation_id))
@@ -38,7 +38,7 @@ class RecommendationResource(Resource):
         Update a Recommendation
         This endpoint will update a Recommendation based the body that is posted
         """
-        app.logger.info('Request to Update a recommendation with id [%s]', recommendation_id)
+        #app.logger.info('Request to Update a recommendation with id [%s]', recommendation_id)
         #check_content_type('application/json')
         recommendation = Recommendation.find(recommendation_id)
         if not recommendation:
@@ -59,7 +59,7 @@ class RecommendationResource(Resource):
         Delete a Recommendation
         This endpoint will delete a Recommendation based the id specified in the path
         """
-        app.logger.info('Request to Delete a recommendation with id [%s]', recommendation_id)
+        #app.logger.info('Request to Delete a recommendation with id [%s]', recommendation_id)
         recommendation = Recommendation.find(recommendation_id)
         if recommendation:
             recommendation.delete()

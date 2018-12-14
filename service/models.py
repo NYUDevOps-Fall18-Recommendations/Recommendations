@@ -56,18 +56,18 @@ class Recommendation(object):
             self.logger.info("Adding new doc  " + str(doc))
             document = self.database.create_document(doc)
 
-    def create(self):
-        if self.productId is None:   # productId is the only required field
-            raise DataValidationError('name attribute is not set')
+    #def create(self):
+    #    if self.productId is None:   # productId is the only required field
+    #        raise DataValidationError('name attribute is not set')
 
-        try:
-            document = self.database.create_document(self.serialize())
-        except HTTPError as err:
-            Recommendation.logger.warning('Create failed: %s', err)
-            return
+    #    try:
+    #        document = self.database.create_document(self.serialize())
+    #    except HTTPError as err:
+    #        Recommendation.logger.warning('Create failed: %s', err)
+    #        return
 
-        if document.exists():
-            self.id = document['_id']
+    #    if document.exists():
+    #        self.id = document['_id']
 
     def delete(self):
         try:

@@ -16,3 +16,6 @@ behave==1.2.5
 selenium==3.3.1
 compare==0.2b0
 requests==2.13.0
+#sawgger
+flasgger==0.5.14
+

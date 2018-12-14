@@ -103,7 +103,7 @@ class TestRecommendationService(unittest.TestCase):
     #    recommendation = Recommendation(0)
     #    self.assertRaises(DataValidationError, recommendation.deserialize, None)
 
-    
+
 
     def test_call_recommendation_with_an_id(self):
         new_reco = {'productId': 'Car', 'categoryId': 'Automobile'}
@@ -177,6 +177,15 @@ class TestRecommendationService(unittest.TestCase):
         new_count = self.get_recommendation_count()
         self.assertEqual(new_count, recommendation_count - 1)
 
+    def test_delete_all_recommendations(self):
+        recommendation_count = self.get_recommendation_count()
+        resp = self.app.delete('/recommendations/reset', content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_recommendation_count()
+        self.assertEqual(new_count, 0)
+        self.assertNotEqual(new_count, recommendation_count)
+
 
     def test_update_recommendationCategory(self):
          new_category = { 'categoryId': 'vehilceInsurance'}
@@ -189,7 +198,7 @@ class TestRecommendationService(unittest.TestCase):
          resp = self.app.put('/recommendations/category/Mechanics', data=dataToUpdate, content_type='application/json')
          self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-    
+
 
 #class TestResetRecommendations(unittest.TestCase):
 #    def test_delete_all_recommendations(self):
@@ -197,7 +206,7 @@ class TestRecommendationService(unittest.TestCase):
 #        resp = self.app.delete('/recommendations', content_type='application/json')
 #        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         #self.assertEqual(len(resp.data), 0)
-    
+
 
 ######################################################################
 # Utility functions

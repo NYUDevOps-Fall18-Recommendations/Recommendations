@@ -14,7 +14,7 @@ class RecommendationCollection(Resource):
 
     def get(self):
         """ Returns all of the Recommendations """
-        app.logger.info('Listing recommendations')
+        #app.logger.info('Listing recommendations')
         recommendations = []
         categoryId = request.args.get('categoryId')
         productId = request.args.get('productId')
@@ -28,7 +28,7 @@ class RecommendationCollection(Resource):
         else:
             recommendations = Recommendation.all()
 
-        app.logger.info('[%s] Recommendations returned', len(recommendations))
+        #app.logger.info('[%s] Recommendations returned', len(recommendations))
         results = [recommendation.serialize() for recommendation in recommendations]
         return results, status.HTTP_200_OK
 
@@ -55,7 +55,7 @@ class RecommendationCollection(Resource):
                 'categoryId': request.form['categoryId'],
             }
         elif content_type == 'application/json':
-            app.logger.info('Processing JSON data')
+            #app.logger.info('Processing JSON data')
             data = request.get_json()
         else:
             message = 'Unsupported Content-Type: {}'.format(content_type)

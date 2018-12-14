@@ -127,13 +127,13 @@ class Recommendation(object):
 
     @classmethod
     def connect(cls):
-        """ Connect to the server """
-        cls.client.connect()
+       """ Connect to the server """
+       cls.client.connect()
 
     @classmethod
     def disconnect(cls):
-        """ Disconnect from the server """
-        cls.client.disconnect()
+       """ Disconnect from the server """
+       cls.client.disconnect()
 
     @classmethod
     def remove_all(cls):

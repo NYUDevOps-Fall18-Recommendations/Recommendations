@@ -12,6 +12,19 @@ from cloudant.client import Cloudant
 from time import sleep # use for rate limiting Cloudant Lite :(
 from service.models import Recommendation, DataValidationError
 
+VCAP_SERVICES = {
+    'cloudantNoSQLDB': [
+        {'credentials': {
+            'username': 'admin',
+            'password': 'pass',
+            'host': '127.0.0.1',
+            'port': 5984,
+            'url': 'http://admin:pass@127.0.0.1:5984'
+            }
+        }
+    ]
+}
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
@@ -114,6 +127,17 @@ class TestRecommendations(unittest.TestCase):
 		recommendations = Recommendation.find_by_suggestionId("suggestionId1")
 		self.assertEqual(len(recommendations), 1)
 		self.assertEqual(recommendations[0].suggestionId, "suggestionId1")
+
+	def test_find_by_productId(self):
+		Recommendation(1, "productId1", "suggestionId1", "categoryId1").save()
+		Recommendation(2, "productId2", "suggestionId2", "categoryId2").save()
+		recommendations = Recommendation.find_by_productId("productId1")
+		self.assertEqual(len(recommendations), 1)
+		self.assertEqual(recommendations[0].productId, "productId1")
+
+	def test_init_db(self):
+		Recommendation.init_db("recommendations")
+		self.assertIsNotNone(Recommendation.client)	
 
 ######################################################################
 #   M A I N

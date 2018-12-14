@@ -197,6 +197,8 @@ class Recommendation(object):
         """
         Initialized Coundant database connection
         """
+        CLOUD_SPACE = os.getenv('SPACE', 'dev')
+        dbname = 'recommendation_' + CLOUD_SPACE
         opts = {}
         vcap_services = {}
         # Try and get VCAP from the environment or a file if developing

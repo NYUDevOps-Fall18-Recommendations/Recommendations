@@ -70,4 +70,3 @@ Scenario: Update Category Action
    And I press the "Clear" button
    And I press the "Search" button
    Then I should see "Modern Comics" in the results
-

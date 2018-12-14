@@ -253,7 +253,7 @@ class Recommendation(object):
         #try:
         Recommendation.database = Recommendation.client[dbname]
         #except KeyError:
-        Recommendation.database = Recommendation.client.create_database(dbname)
+        #Recommendation.database = Recommendation.client.create_database(dbname)
         # Create a database using an initialized client
         # check for success
         #if not Recommendation.database.exists():

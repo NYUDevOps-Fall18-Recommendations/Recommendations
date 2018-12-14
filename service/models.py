@@ -125,15 +125,15 @@ class Recommendation(object):
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
 
-    @classmethod
-    def connect(cls):
-        """ Connect to the server """
-        cls.client.connect()
+    #@classmethod
+    #def connect(cls):
+    #    """ Connect to the server """
+    #    cls.client.connect()
 
-    @classmethod
-    def disconnect(cls):
-        """ Disconnect from the server """
-        cls.client.disconnect()
+    #@classmethod
+    #def disconnect(cls):
+    #    """ Disconnect from the server """
+    #    cls.client.disconnect()
 
     @classmethod
     def remove_all(cls):

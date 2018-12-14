@@ -238,9 +238,9 @@ class Recommendation(object):
 
         #Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
         try:
-            if ADMIN_PARTY:
+        #  if ADMIN_PARTY:
         #        Recommendation.logger.info('Running in Admin Party Mode...')
-                Recommendation.client = Cloudant(opts['username'],
+            Recommendation.client = Cloudant(opts['username'],
                                   opts['password'],
                                   url=opts['url'],
                                   connect=True,

@@ -125,15 +125,15 @@ class Recommendation(object):
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
 
-    #@classmethod
-    #def connect(cls):
+    @classmethod
+    def connect(cls):
         """ Connect to the server """
-    #    cls.client.connect()
+        cls.client.connect()
 
-    #@classmethod
-    #def disconnect(cls):
+    @classmethod
+    def disconnect(cls):
         """ Disconnect from the server """
-    #    cls.client.disconnect()
+        cls.client.disconnect()
 
     @classmethod
     def remove_all(cls):
@@ -237,25 +237,25 @@ class Recommendation(object):
             exit(-1)
 
         #Recommendation.logger.info('Cloudant Endpoint: %s', opts['url'])
-        #try:
-        #    if ADMIN_PARTY:
+        try:
+            if ADMIN_PARTY:
         #        Recommendation.logger.info('Running in Admin Party Mode...')
-        Recommendation.client = Cloudant(opts['username'],
+            Recommendation.client = Cloudant(opts['username'],
                                   opts['password'],
                                   url=opts['url'],
                                   connect=True,
                                   auto_renew=True,
                                   admin_party=ADMIN_PARTY
                                  )
-        #except ConnectionError:
-        #    raise AssertionError('Cloudant service could not be reached')
+        except ConnectionError:
+            raise AssertionError('Cloudant service could not be reached')
 
         # Create database if it doesn't exist
-        #try:
-        Recommendation.database = Recommendation.client[dbname]
-        #except KeyError:
+        try:
+            Recommendation.database = Recommendation.client[dbname]
+        except KeyError:
             # Create a database using an initialized client
-        Recommendation.database = Recommendation.client.create_database(dbname)
+            Recommendation.database = Recommendation.client.create_database(dbname)
         # check for success
         if not Recommendation.database.exists():
             raise AssertionError('Database [{}] could not be obtained'.format(dbname))

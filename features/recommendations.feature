@@ -9,8 +9,7 @@ Background:
         |  1 | Infinity Gauntlet | Soul Stone        | Comics      |
         |  2 | iPhone            | iphone Case       | Electronics |
         |  3 | Soul Stone        | Infinity Gauntlet | Comics      |
-  	   	|  4 | iphone Case       | iPhone            | Electronics |
-  		  |  5 | airpod            | iPhone            | Electronics |
+
 
 Scenario: The server is running
   When I visit the "Home Page"
@@ -31,14 +30,43 @@ Scenario: Update a Recommendation
     When I visit the "Home Page"
     And I set the "id" to "2"
     And I press the "Retrieve" button
-    Then I should see "iPhone" in the "productid" field and "iphone Case" in the "suggestionid" field
-    When I change "suggestionid" to "airpod"
+    Then I should see "iPhone" in the "productId" field
+    When I change "productId" to "Samsung"
     And I press the "Update" button
     Then I should see the message "Success"
-    When I set the "Id" to "2"
+    When I set the "id" to "2"
     And I press the "Retrieve" button
-    Then I should see "airpod" in the "suggestionid" field
+    Then I should see "Samsung" in the "productId" field
     When I press the "Clear" button
     And I press the "Search" button
-    Then I should see "airpod" in the "suggestionid" field of the product "iPhone"
-    Then I should not see "iphone Case" in the "suggestionid" field of the product "iPhone"
+    Then I should see "Samsung" in the results
+    Then I should not see "iPhone" in the results
+
+Scenario: Delete a Recommendation
+    When I visit the "Home Page"
+    And I set the "id" to "2"
+    And I press the "Delete" button
+    And I press the "Search" button
+    Then I should not see "iPhone" in the results
+
+Scenario: list all recommendations
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "1" in the results
+    And I should see "2" in the results
+    And I should see "Soul Stone" in the results
+
+Scenario: get one recommendation
+    When I visit the "Home Page"
+    And I set the "id" to "2"
+    And I press the "Retrieve" button
+    Then I should see "iPhone" in the "productId" field
+
+Scenario: Update Category Action
+   When I visit the "Home Page"
+   And I set the old_categoryId to "Comics"
+   And I set the "categoryId" to "Modern Comics"
+   And I press the "Action" button
+   And I press the "Clear" button
+   And I press the "Search" button
+   Then I should see "Modern Comics" in the results
